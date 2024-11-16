@@ -17,7 +17,7 @@
       "grauly.ritualis.Ritualis"
     ],
     "fabric-datagen": [
-      "grauly.ritualis.RitualisDatagen"
+      "grauly.ritualis.client.RitualisDatagen"
     ]
   },
   "mixins": [
