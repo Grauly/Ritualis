@@ -38,7 +38,7 @@ loom {
 
             name = "Minecraft Data"
             vmArg("-Dfabric-api.datagen")
-            vmArg("-Dfabric-api.datagen.output-dir=${project.file("src/generated/resources")}")
+            vmArg("-Dfabric-api.datagen.output-dir=${project.file("src/main/generated/resources")}")
             vmArg("-Dfabric-api.datagen.modid=ritualis")
             vmArg("-Dporting_lib.datagen.existing_resources=${project.file("src/main/resources")}")
 
