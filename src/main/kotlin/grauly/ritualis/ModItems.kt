@@ -9,7 +9,6 @@ import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
-import net.minecraft.util.DyeColor
 import net.minecraft.util.Identifier
 
 object ModItems {
@@ -18,13 +17,15 @@ object ModItems {
         val key = RegistryKey.of(RegistryKeys.ITEM, id)
         val settings = Item.Settings()
         settings.registryKey(key).useBlockPrefixedTranslationKey()
-        val item = register(id, BlockItem(candleBlock, settings))
+        register(id, BlockItem(candleBlock, settings))
+    }
+
+    fun init() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register {group ->
-            group.add(item)
+            ModBlocks.candles.forEach {candle -> group.add(candle.asItem())}
         }
     }
 
-    fun init() { }
     private fun register(id: String, item: Item): Item =
         register(Identifier.of(Ritualis.MODID, id), item)
 
