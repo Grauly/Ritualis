@@ -1,6 +1,15 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "ritualis:block/lime_candle"
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "minecraft:item/lime_candle"
+      },
+      {
+        "type": "minecraft:model",
+        "model": "ritualis:item/ritual_candle_overlay"
+      }
+    ]
   }
 }

@@ -6,6 +6,7 @@ import grauly.ritualis.mixin.client.ItemModelGeneratorAccessor
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput
 import net.minecraft.client.data.*
+import net.minecraft.item.Item
 import net.minecraft.util.Identifier
 import java.util.*
 
@@ -15,13 +16,20 @@ class ItemModelDatagen(output: FabricDataOutput?) : FabricModelProvider(output) 
     }
 
     override fun generateItemModels(itemModelGenerator: ItemModelGenerator) {
-        val ima = itemModelGenerator as ItemModelGeneratorAccessor
-        val baseCandle = ItemModels.basic(Identifier.of("minecraft","item/candle"))
+        itemModelGenerator as ItemModelGeneratorAccessor
+        generateCandleItemModel(ModBlocks.candles[0].asItem(),"", itemModelGenerator)
+        for (index:Int in 1..Ritualis.COLOR_ORDER.size) {
+            val color = Ritualis.COLOR_ORDER[index - 1]
+            val item = ModBlocks.candles[index].asItem()
+            generateCandleItemModel(item, color.getName(), itemModelGenerator)
+
+        }
+    }
+
+    private fun generateCandleItemModel(item: Item, colorString: String, itemModelGeneratorAccessor: ItemModelGeneratorAccessor) {
+        val baseCandle = ItemModels.basic(Identifier.of("minecraft","item/" + colorString + "_candle"))
         val candleOverlay = ItemModels.basic(Identifier.of(Ritualis.MODID, "item/ritual_candle_overlay"))
         val composite = ItemModels.composite(baseCandle, candleOverlay)
-        val modelA = Model(Optional.of(Identifier.ofVanilla("a")), Optional.empty(), TextureKey.LAYER0)
-        val modelB = Model(Optional.of(Identifier.ofVanilla("b")), Optional.empty(), TextureKey.LAYER0)
-        ima.output.accept(ModBlocks.candles[1].asItem(), composite)
-        //itemModelGenerator.register(ModBlocks.candles[1].asItem(), modelA)
+        itemModelGeneratorAccessor.output.accept(item, composite)
     }
 }
