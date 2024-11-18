@@ -38,7 +38,7 @@ loom {
 
             name = "Minecraft Data"
             vmArg("-Dfabric-api.datagen")
-            vmArg("-Dfabric-api.datagen.output-dir=${project.file("src/main/generated/resources")}")
+            vmArg("-Dfabric-api.datagen.output-dir=${project.file("src/main/generated")}")
             vmArg("-Dfabric-api.datagen.modid=ritualis")
             vmArg("-Dporting_lib.datagen.existing_resources=${project.file("src/main/resources")}")
 
@@ -50,6 +50,16 @@ loom {
 fabricApi {
     configureDataGeneration {
         createRunConfiguration = false
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs.add(
+                project.file("src/main/generated")
+            )
+        }
     }
 }
 
@@ -76,6 +86,8 @@ tasks.processResources {
     inputs.property("minecraft_version", project.property("minecraft_version"))
     inputs.property("loader_version", project.property("loader_version"))
     filteringCharset = "UTF-8"
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     filesMatching("fabric.mod.json") {
         expand(
