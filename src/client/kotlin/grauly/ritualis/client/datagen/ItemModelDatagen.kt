@@ -16,8 +16,8 @@ class ItemModelDatagen(output: FabricDataOutput?) : FabricModelProvider(output) 
 
     override fun generateItemModels(itemModelGenerator: ItemModelGenerator) {
         val ima = itemModelGenerator as ItemModelGeneratorAccessor
-        val baseCandle = ItemModels.basic(Identifier.of("minecraft","candle"))
-        val candleOverlay = ItemModels.basic(Identifier.of(Ritualis.MODID, "ritual_candle_overlay"))
+        val baseCandle = ItemModels.basic(Identifier.of("minecraft","item/candle"))
+        val candleOverlay = ItemModels.basic(Identifier.of(Ritualis.MODID, "item/ritual_candle_overlay"))
         val composite = ItemModels.composite(baseCandle, candleOverlay)
         val modelA = Model(Optional.of(Identifier.ofVanilla("a")), Optional.empty(), TextureKey.LAYER0)
         val modelB = Model(Optional.of(Identifier.ofVanilla("b")), Optional.empty(), TextureKey.LAYER0)
