@@ -48,7 +48,7 @@ loom {
 }
 
 fabricApi {
-    configureDataGeneration() {
+    configureDataGeneration {
         createRunConfiguration = false
     }
 }
