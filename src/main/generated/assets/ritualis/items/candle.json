@@ -4,7 +4,7 @@
     "models": [
       {
         "type": "minecraft:model",
-        "model": "minecraft:item/_candle"
+        "model": "minecraft:item/candle"
       },
       {
         "type": "minecraft:model",

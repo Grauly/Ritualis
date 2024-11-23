@@ -16,7 +16,7 @@ object ItemModelDatagen {
         for (index: Int in 1..Ritualis.COLOR_ORDER.size) {
             val color = Ritualis.COLOR_ORDER[index - 1]
             val item = ModBlocks.candles[index].asItem()
-            generateCandleItemModel(item, color.getName(), itemModelGenerator)
+            generateCandleItemModel(item, "${color.getName()}_", itemModelGenerator)
 
         }
     }
@@ -26,7 +26,7 @@ object ItemModelDatagen {
         colorString: String,
         itemModelGeneratorAccessor: ItemModelGeneratorAccessor
     ) {
-        val baseCandle = ItemModels.basic(Identifier.of("minecraft", "item/" + colorString + "_candle"))
+        val baseCandle = ItemModels.basic(Identifier.of("minecraft", "item/${colorString}candle"))
         val candleOverlay = ItemModels.basic(Identifier.of(Ritualis.MODID, "item/ritual_candle_overlay"))
         val composite = ItemModels.composite(baseCandle, candleOverlay)
         itemModelGeneratorAccessor.output.accept(item, composite)
