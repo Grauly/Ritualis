@@ -33,14 +33,11 @@ class RitualCandleBlockEntity(
         val localState: BlockState = serverWorld.getBlockState(pos)!!
         val receivedEvent = event.event
         val lit = localState.get(CandleBlock.LIT)
-        Ritualis.LOGGER.info("$pos processing ${receivedEvent.idAsString}, am I lit: $lit")
         if (receivedEvent.matchesKey(ModEvents.CANDLE_IGNITE.registryKey()) && !lit) {
-            Ritualis.LOGGER.info("igniting")
             doIgnite(event.source, localState, serverWorld)
             return
         }
         if (receivedEvent.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()) && lit) {
-            Ritualis.LOGGER.info("extinguishing")
             doExtinguish(event.source, localState, serverWorld)
             return
         }
@@ -55,7 +52,6 @@ class RitualCandleBlockEntity(
         //if this ever fails due to long not being able to be made to int, something went CATASTROPHICALLY wrong.
         serverWorld.scheduleBlockTick(pos, localState.block, event.ticksTillArrival.toInt())
         serverWorld.markDirty(pos)
-        Ritualis.LOGGER.info("$pos enqueued ${event.event.idAsString} from ${event.source} for ${event.ticksTillArrival} ticks later")
     }
 
     fun scheduledTick() {

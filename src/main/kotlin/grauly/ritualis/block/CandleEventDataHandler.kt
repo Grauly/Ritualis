@@ -17,7 +17,6 @@ class CandleEventDataHandler(
         handleTimeStamp(serverWorld)
         events.add(eventData)
         events.sortWith(compareBy { e: CandleEventData -> e.ticksTillArrival })
-        Ritualis.LOGGER.info("queued events: $events")
         //TODO spawn particle and such
     }
 

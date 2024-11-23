@@ -39,7 +39,6 @@ class CandleEventListener(
         if (emitterPos == pos.toCenterPos()) return false
         val dist = pos.toCenterPos().subtract(emitterPos).length()
         val delay = dist.roundToLong()
-        Ritualis.LOGGER.info("$pos creating ${event.idAsString} - $dist : $delay")
         val eventData = CandleEventDataHandler.CandleEventData(event, emitterPos, delay)
         candle.queueEvent(eventData)
         return true
