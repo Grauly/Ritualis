@@ -2,7 +2,6 @@ package grauly.ritualis.block
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import grauly.ritualis.Ritualis
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
@@ -28,9 +27,9 @@ class CandleEventDataHandler(
     }
 
     private fun handleTimeStamp(serverWorld: ServerWorld) {
-        if(lastAccessedTimestamp == -1L) lastAccessedTimestamp = serverWorld.time
+        if (lastAccessedTimestamp == -1L) lastAccessedTimestamp = serverWorld.time
         val deltaTime = serverWorld.time - lastAccessedTimestamp
-        events.forEach { e -> e.ticksTillArrival -= deltaTime}
+        events.forEach { e -> e.ticksTillArrival -= deltaTime }
         lastAccessedTimestamp = serverWorld.time
     }
 

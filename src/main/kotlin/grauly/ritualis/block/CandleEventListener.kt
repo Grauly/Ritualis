@@ -1,12 +1,6 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModEvents
-import grauly.ritualis.Ritualis
-import net.minecraft.block.BlockState
-import net.minecraft.block.CandleBlock
-import net.minecraft.particle.DustParticleEffect
-import net.minecraft.particle.ParticleEffect
-import net.minecraft.particle.ParticleTypes
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
@@ -15,7 +9,6 @@ import net.minecraft.world.event.BlockPositionSource
 import net.minecraft.world.event.GameEvent
 import net.minecraft.world.event.PositionSource
 import net.minecraft.world.event.listener.GameEventListener
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 class CandleEventListener(
