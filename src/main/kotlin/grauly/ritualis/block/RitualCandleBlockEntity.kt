@@ -24,11 +24,6 @@ class RitualCandleBlockEntity(
     GameEventListener.Holder<CandleEventListener> {
     private val listener = CandleEventListener(pos, this)
     private var dataHandler = CandleEventDataHandler()
-    private var lastInteractedTime: Long = -1L
-
-    init {
-        setupTime()
-    }
 
     override fun getEventListener(): CandleEventListener = listener
 
@@ -53,11 +48,9 @@ class RitualCandleBlockEntity(
     }
 
     fun queueEvent(event: CandleEventDataHandler.CandleEventData) {
-        val deltaTime = deltaTime()
-        dataHandler.applyDelta(deltaTime)
-        dataHandler.queueEvent(event)
-        if(world !is ServerWorld) return
+        if (world !is ServerWorld) return
         val serverWorld = world as ServerWorld
+        dataHandler.queueEvent(event, serverWorld)
         val localState: BlockState = serverWorld.getBlockState(pos)!!
         //if this ever fails due to long not being able to be made to int, something went CATASTROPHICALLY wrong.
         serverWorld.scheduleBlockTick(pos, localState.block, event.ticksTillArrival.toInt())
@@ -66,28 +59,9 @@ class RitualCandleBlockEntity(
     }
 
     fun scheduledTick() {
-/*
-        if(!dataHandler.canPopEvent()) return
-        val event = dataHandler.popEvent()
-        Ritualis.LOGGER.info("$pos popping $event")
-        processEvent(event)
-*/
-        dataHandler.applyDelta(deltaTime())
-        dataHandler.actEvents { e -> processEvent(e)}
-    }
-
-    private fun setupTime() {
-        if(lastInteractedTime == -1L) {
-            lastInteractedTime = world?.time ?: -1
-        }
-    }
-
-    private fun deltaTime(): Long {
-        setupTime()
-        val worldTime = world?.time!!
-        val delta = worldTime - lastInteractedTime
-        lastInteractedTime = worldTime
-        return delta
+        if (world !is ServerWorld) return
+        val serverWorld = world as ServerWorld
+        dataHandler.actEvents({ e -> processEvent(e) }, serverWorld)
     }
 
     private fun doExtinguish(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {
