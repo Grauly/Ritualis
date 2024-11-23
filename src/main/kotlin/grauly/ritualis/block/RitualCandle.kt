@@ -7,6 +7,7 @@ import net.minecraft.block.CandleBlock
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.random.Random
 import net.minecraft.world.World
 
 class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProvider {
@@ -28,5 +29,10 @@ class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProv
 
     override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
         return RitualCandleBlockEntity(pos, state)
+    }
+
+    override fun scheduledTick(state: BlockState, world: ServerWorld, pos: BlockPos, random: Random) {
+        super.scheduledTick(state, world, pos, random)
+        (world.getBlockEntity(pos) as RitualCandleBlockEntity).scheduledTick()
     }
 }

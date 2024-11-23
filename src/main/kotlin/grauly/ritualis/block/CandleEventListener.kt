@@ -1,6 +1,7 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModEvents
+import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
 import net.minecraft.particle.DustParticleEffect
@@ -39,37 +40,11 @@ class CandleEventListener(
     ): Boolean {
         if (emitterPos == pos.toCenterPos()) return false
         val state = getState() ?: return false
-        if (event == ModEvents.CANDLE_IGNITE && !state.get(CandleBlock.LIT)) {
-            doIgnite(emitterPos, world, state)
-            return true
-        }
-        if (event == ModEvents.CANDLE_EXTINGUISH && state.get(CandleBlock.LIT)) {
-            doExtinguish(emitterPos, world, state)
-            return true
-        }
+        val lit = state.get(CandleBlock.LIT)
+        if (lit && event == ModEvents.CANDLE_IGNITE) return false
+        if (!lit && event == ModEvents.CANDLE_EXTINGUISH) return false
+        val eventData = CandleEventDataHandler.CandleEventData(event, emitterPos, pos.toCenterPos().subtract(emitterPos).length().toInt())
+        candle.queueEvent(eventData)
         return false
-    }
-
-    private fun doExtinguish(emitterPos: Vec3d, world: ServerWorld, state: BlockState) {
-        CandleBlock.extinguish(null, state, world, pos)
-        world.markDirty(pos)
-        particleLine(world, emitterPos, pos.toCenterPos(), DustParticleEffect(0, .5f), 10)
-    }
-
-    private fun doIgnite(emitterPos: Vec3d, world: ServerWorld, state: BlockState) {
-        world.setBlockState(pos, state.with(CandleBlock.LIT, true))
-        world.markDirty(pos)
-        particleLine(world, emitterPos, pos.toCenterPos(), ParticleTypes.FLAME)
-    }
-
-    private fun particleLine(world: ServerWorld, from: Vec3d, to: Vec3d, particle: ParticleEffect, resolution: Int = 2) {
-        val deltaVector = to.subtract(from)
-        val length = deltaVector.length()
-        val pointNum = (length * resolution).toInt()
-        for (i in 0..pointNum) {
-            val delta = i.div(pointNum.toDouble())
-            val point = from.lerp(to, delta)
-            world.spawnParticles(particle, point.x, point.y, point.z, 0, 0.0, 0.0, 0.0, 0.0)
-        }
     }
 }
