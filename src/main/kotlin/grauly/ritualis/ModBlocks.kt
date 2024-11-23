@@ -3,6 +3,7 @@ package grauly.ritualis
 import grauly.ritualis.block.RitualCandle
 import net.minecraft.block.AbstractBlock
 import net.minecraft.block.Block
+import net.minecraft.block.CandleBlock
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
@@ -25,6 +26,7 @@ object ModBlocks {
         val key = RegistryKey.of(RegistryKeys.BLOCK, id)
         val settings = AbstractBlock.Settings.create()
         settings.registryKey(key)
+        settings.luminance(CandleBlock.STATE_TO_LUMINANCE)
         val block = register(key, RitualCandle(settings))
         ModItems.registerCandleBlockItem(block, id)
         candles.add(block)
