@@ -76,7 +76,13 @@ class RitualCandleBlockEntity(
         particleLine(emitterPos, pos.toCenterPos(), ParticleTypes.FLAME, serverWorld)
     }
 
-    private fun particleLine(from: Vec3d, to: Vec3d, particle: ParticleEffect, serverWorld: ServerWorld, resolution: Int = 2) {
+    private fun particleLine(
+        from: Vec3d,
+        to: Vec3d,
+        particle: ParticleEffect,
+        serverWorld: ServerWorld,
+        resolution: Int = 2
+    ) {
         val deltaVector = to.subtract(from)
         val length = deltaVector.length()
         val pointNum = (length * resolution).toInt()
@@ -91,14 +97,15 @@ class RitualCandleBlockEntity(
         super.readNbt(nbt, registries)
         val regOps = registries.getOps(NbtOps.INSTANCE)
         if (nbt.contains(EVENT_QUEUE_KEY)) {
-            CandleEventDataHandler.CODEC.parse(regOps, nbt).ifSuccess{ handler -> dataHandler = handler}
+            CandleEventDataHandler.CODEC.parse(regOps, nbt).ifSuccess { handler -> dataHandler = handler }
         }
     }
 
     override fun writeNbt(nbt: NbtCompound, registries: RegistryWrapper.WrapperLookup) {
         super.writeNbt(nbt, registries)
         val regOps = registries.getOps(NbtOps.INSTANCE)
-        CandleEventDataHandler.CODEC.encodeStart(regOps, dataHandler).ifSuccess { encoded -> nbt.put(EVENT_QUEUE_KEY, encoded)}
+        CandleEventDataHandler.CODEC.encodeStart(regOps, dataHandler)
+            .ifSuccess { encoded -> nbt.put(EVENT_QUEUE_KEY, encoded) }
     }
 
     companion object {
