@@ -2,6 +2,7 @@ package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.ModEvents
+import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
 import net.minecraft.block.entity.BlockEntity
@@ -54,7 +55,7 @@ class RitualCandleBlockEntity(
         ): Boolean {
             if (emitterPos == pos.toCenterPos()) return false
             val state = getState() ?: return false
-            if (event == ModEvents.CANDLE_IGNITE && state.get(CandleBlock.LIT)) {
+            if (event == ModEvents.CANDLE_IGNITE && !state.get(CandleBlock.LIT)) {
                 doIgnite(emitterPos, world, state)
                 return true
             }
