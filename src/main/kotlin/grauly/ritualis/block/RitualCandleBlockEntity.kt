@@ -2,7 +2,6 @@ package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.ModEvents
-import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
 import net.minecraft.block.entity.BlockEntity
@@ -23,19 +22,29 @@ class RitualCandleBlockEntity(
     private val state: BlockState
 ) : BlockEntity(ModBlockEntities.RITUAL_CANDLE_ENTITY, pos, state),
     GameEventListener.Holder<RitualCandleBlockEntity.CandleEventListener> {
+    private val listener = CandleEventListener(pos, this)
 
+    override fun getEventListener(): CandleEventListener = listener
 
-    override fun getEventListener(): CandleEventListener = CandleEventListener(pos, state)
-
+    private fun getUpdatedBlockState(): BlockState? {
+        if (getWorld() !is ServerWorld) return null
+        val serverWorld = getWorld() as ServerWorld
+        return serverWorld.getBlockState(pos)
+    }
 
     class CandleEventListener(
         private val pos: BlockPos,
-        private val state: BlockState
+        private val candle: RitualCandleBlockEntity
     ) : GameEventListener {
 
         override fun getPositionSource(): PositionSource = BlockPositionSource(pos)
 
-        override fun getRange(): Int = state.get(CandleBlock.CANDLES) * 4
+        override fun getRange(): Int {
+            val state = getState() ?: return 0
+            return state.get(CandleBlock.CANDLES).times(4)
+        }
+
+        private fun getState(): BlockState? = candle.getUpdatedBlockState()
 
         override fun listen(
             world: ServerWorld,
@@ -43,24 +52,26 @@ class RitualCandleBlockEntity(
             emitter: GameEvent.Emitter,
             emitterPos: Vec3d
         ): Boolean {
-            if (event == ModEvents.CANDLE_IGNITE && !state.get(CandleBlock.LIT)) {
-                doIgnite(emitterPos, world)
+            if (emitterPos == pos.toCenterPos()) return false
+            val state = getState() ?: return false
+            if (event == ModEvents.CANDLE_IGNITE && state.get(CandleBlock.LIT)) {
+                doIgnite(emitterPos, world, state)
                 return true
             }
             if (event == ModEvents.CANDLE_EXTINGUISH && state.get(CandleBlock.LIT)) {
-                doExtinguish(emitterPos, world)
+                doExtinguish(emitterPos, world, state)
                 return true
             }
             return false
         }
 
-        private fun doExtinguish(emitterPos: Vec3d, world: ServerWorld) {
+        private fun doExtinguish(emitterPos: Vec3d, world: ServerWorld, state: BlockState) {
             CandleBlock.extinguish(null, state, world, pos)
             world.markDirty(pos)
             particleLine(world, emitterPos, pos.toCenterPos(), DustParticleEffect(0, .1f))
         }
 
-        private fun doIgnite(emitterPos: Vec3d, world: ServerWorld) {
+        private fun doIgnite(emitterPos: Vec3d, world: ServerWorld, state: BlockState) {
             world.setBlockState(pos, state.with(CandleBlock.LIT, true))
             world.markDirty(pos)
             particleLine(world, emitterPos, pos.toCenterPos(), ParticleTypes.FLAME)
@@ -68,7 +79,7 @@ class RitualCandleBlockEntity(
 
         private fun particleLine(world: ServerWorld, from: Vec3d, to: Vec3d, particle: ParticleEffect) {
             val resolution = 10
-            val deltaVector = from.subtract(to)
+            val deltaVector = to.subtract(from)
             val length = deltaVector.length()
             val step = deltaVector.multiply(resolution / length)
             for (i in 0..(length * resolution).toInt()) {
