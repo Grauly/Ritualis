@@ -4,35 +4,35 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import grauly.ritualis.Ritualis
 import net.minecraft.registry.entry.RegistryEntry
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.GameEvent
 
 class CandleEventDataHandler(
     private val events: MutableList<CandleEventData> = mutableListOf()
 ) {
-    fun queueEvent(eventData: CandleEventData) {
+    private var lastAccessedTimestamp = -1L
+
+    fun queueEvent(eventData: CandleEventData, serverWorld: ServerWorld) {
+        handleTimeStamp(serverWorld)
         events.add(eventData)
         events.sortWith(compareBy { e: CandleEventData -> e.ticksTillArrival })
         Ritualis.LOGGER.info("queued events: $events")
         //TODO spawn particle and such
     }
 
-    fun canPopEvent(): Boolean = events.isNotEmpty()
-
-    fun popEvent(): CandleEventData {
-        val first = events.first()
-        events.removeFirst()
-        return first
-    }
-
-    fun actEvents(eventHandler: (CandleEventData) -> Unit) {
+    fun actEvents(eventHandler: (CandleEventData) -> Unit, serverWorld: ServerWorld) {
+        handleTimeStamp(serverWorld)
         val pops = events.filter { e -> e.ticksTillArrival <= 0 }
         pops.forEach(eventHandler)
         events.removeAll(pops)
     }
 
-    fun applyDelta(deltaTime: Long) {
+    private fun handleTimeStamp(serverWorld: ServerWorld) {
+        if(lastAccessedTimestamp == -1L) lastAccessedTimestamp = serverWorld.time
+        val deltaTime = serverWorld.time - lastAccessedTimestamp
         events.forEach { e -> e.ticksTillArrival -= deltaTime}
+        lastAccessedTimestamp = serverWorld.time
     }
 
     companion object {
