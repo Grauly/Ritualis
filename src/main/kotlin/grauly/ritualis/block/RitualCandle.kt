@@ -21,6 +21,7 @@ class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProv
         super.onStateReplaced(state, world, pos, newState, moved)
         if (world !is ServerWorld) return
         if (newState.block !is RitualCandle) return
+        if (state.get(LIT) == newState.get(LIT)) return
         val eventToDispatch = if (newState.get(LIT) == true) ModEvents.CANDLE_IGNITE else ModEvents.CANDLE_EXTINGUISH
         world.emitGameEvent(null, eventToDispatch, pos)
     }
