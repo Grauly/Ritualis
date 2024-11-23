@@ -69,7 +69,7 @@ class RitualCandleBlockEntity(
         private fun doExtinguish(emitterPos: Vec3d, world: ServerWorld, state: BlockState) {
             CandleBlock.extinguish(null, state, world, pos)
             world.markDirty(pos)
-            particleLine(world, emitterPos, pos.toCenterPos(), DustParticleEffect(0, .5f))
+            particleLine(world, emitterPos, pos.toCenterPos(), DustParticleEffect(0, .5f), 10)
         }
 
         private fun doIgnite(emitterPos: Vec3d, world: ServerWorld, state: BlockState) {
@@ -78,8 +78,7 @@ class RitualCandleBlockEntity(
             particleLine(world, emitterPos, pos.toCenterPos(), ParticleTypes.FLAME)
         }
 
-        private fun particleLine(world: ServerWorld, from: Vec3d, to: Vec3d, particle: ParticleEffect) {
-            val resolution = 10
+        private fun particleLine(world: ServerWorld, from: Vec3d, to: Vec3d, particle: ParticleEffect, resolution: Int = 2) {
             val deltaVector = to.subtract(from)
             val length = deltaVector.length()
             val pointNum = (length * resolution).toInt()
