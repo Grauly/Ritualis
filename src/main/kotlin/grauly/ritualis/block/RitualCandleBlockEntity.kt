@@ -33,6 +33,7 @@ class RitualCandleBlockEntity(
         return serverWorld.getBlockState(pos)
     }
 
+
     class CandleEventListener(
         private val pos: BlockPos,
         private val candle: RitualCandleBlockEntity
@@ -44,6 +45,8 @@ class RitualCandleBlockEntity(
             val state = getState() ?: return 0
             return state.get(CandleBlock.CANDLES).times(4)
         }
+
+        override fun getTriggerOrder(): GameEventListener.TriggerOrder = GameEventListener.TriggerOrder.BY_DISTANCE
 
         private fun getState(): BlockState? = candle.getUpdatedBlockState()
 
