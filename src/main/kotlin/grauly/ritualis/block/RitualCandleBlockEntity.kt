@@ -18,59 +18,91 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.listener.GameEventListener
 
 class RitualCandleBlockEntity(
-    private val pos: BlockPos,
-    private val state: BlockState
+    pos: BlockPos,
+    state: BlockState
 ) : BlockEntity(ModBlockEntities.RITUAL_CANDLE_ENTITY, pos, state),
     GameEventListener.Holder<CandleEventListener> {
     private val listener = CandleEventListener(pos, this)
     private var dataHandler = CandleEventDataHandler()
+    private var lastInteractedTime: Long = -1L
+
+    init {
+        setupTime()
+    }
 
     override fun getEventListener(): CandleEventListener = listener
 
-    fun getCurrentState(): BlockState? = world?.getBlockState(pos)
-
     fun processEvent(event: CandleEventDataHandler.CandleEventData) {
         if (world !is ServerWorld) return
+        val serverWorld = world as ServerWorld
+        val localState: BlockState = serverWorld.getBlockState(pos)!!
         val receivedEvent = event.event
-        if (receivedEvent == ModEvents.CANDLE_IGNITE && !state.get(CandleBlock.LIT)) {
-            doIgnite(event.source, state)
+        val lit = localState.get(CandleBlock.LIT)
+        Ritualis.LOGGER.info("$pos processing ${receivedEvent.idAsString}, am I lit: $lit")
+        if (receivedEvent.matchesKey(ModEvents.CANDLE_IGNITE.registryKey()) && !lit) {
+            Ritualis.LOGGER.info("igniting")
+            doIgnite(event.source, localState, serverWorld)
             return
         }
-        if (receivedEvent == ModEvents.CANDLE_EXTINGUISH && state.get(CandleBlock.LIT)) {
-            doExtinguish(event.source, state)
+        if (receivedEvent.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()) && lit) {
+            Ritualis.LOGGER.info("extinguishing")
+            doExtinguish(event.source, localState, serverWorld)
             return
         }
+        serverWorld.markDirty(pos)
     }
 
     fun queueEvent(event: CandleEventDataHandler.CandleEventData) {
+        val deltaTime = deltaTime()
+        dataHandler.applyDelta(deltaTime)
         dataHandler.queueEvent(event)
         if(world !is ServerWorld) return
         val serverWorld = world as ServerWorld
-        serverWorld.scheduleBlockTick(pos, state.block, event.ticksTillArrival)
-        Ritualis.LOGGER.info("enqueued ${event.event} from ${event.source} for ${event.ticksTillArrival} ticks later")
+        val localState: BlockState = serverWorld.getBlockState(pos)!!
+        //if this ever fails due to long not being able to be made to int, something went CATASTROPHICALLY wrong.
+        serverWorld.scheduleBlockTick(pos, localState.block, event.ticksTillArrival.toInt())
+        serverWorld.markDirty(pos)
+        Ritualis.LOGGER.info("$pos enqueued ${event.event.idAsString} from ${event.source} for ${event.ticksTillArrival} ticks later")
     }
 
     fun scheduledTick() {
+/*
+        if(!dataHandler.canPopEvent()) return
         val event = dataHandler.popEvent()
-        Ritualis.LOGGER.info("popping $event")
+        Ritualis.LOGGER.info("$pos popping $event")
         processEvent(event)
+*/
+        dataHandler.applyDelta(deltaTime())
+        dataHandler.actEvents { e -> processEvent(e)}
     }
 
-    private fun doExtinguish(emitterPos: Vec3d, state: BlockState) {
-        CandleBlock.extinguish(null, state, world, pos)
-        world?.markDirty(pos)
-        particleLine(emitterPos, pos.toCenterPos(), DustParticleEffect(0, .5f), 10)
+    private fun setupTime() {
+        if(lastInteractedTime == -1L) {
+            lastInteractedTime = world?.time ?: -1
+        }
     }
 
-    private fun doIgnite(emitterPos: Vec3d, state: BlockState) {
-        world?.setBlockState(pos, state.with(CandleBlock.LIT, true))
-        world?.markDirty(pos)
-        particleLine(emitterPos, pos.toCenterPos(), ParticleTypes.FLAME)
+    private fun deltaTime(): Long {
+        setupTime()
+        val worldTime = world?.time!!
+        val delta = worldTime - lastInteractedTime
+        lastInteractedTime = worldTime
+        return delta
     }
 
-    private fun particleLine(from: Vec3d, to: Vec3d, particle: ParticleEffect, resolution: Int = 2) {
-        if (world !is ServerWorld) return
-        val serverWorld = (world as ServerWorld)
+    private fun doExtinguish(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {
+        CandleBlock.extinguish(null, state, serverWorld, pos)
+        serverWorld.markDirty(pos)
+        particleLine(emitterPos, pos.toCenterPos(), DustParticleEffect(0, .5f), serverWorld, 10)
+    }
+
+    private fun doIgnite(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {
+        serverWorld.setBlockState(pos, state.with(CandleBlock.LIT, true))
+        serverWorld.markDirty(pos)
+        particleLine(emitterPos, pos.toCenterPos(), ParticleTypes.FLAME, serverWorld)
+    }
+
+    private fun particleLine(from: Vec3d, to: Vec3d, particle: ParticleEffect, serverWorld: ServerWorld, resolution: Int = 2) {
         val deltaVector = to.subtract(from)
         val length = deltaVector.length()
         val pointNum = (length * resolution).toInt()

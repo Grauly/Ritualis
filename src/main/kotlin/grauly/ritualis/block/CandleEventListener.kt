@@ -15,6 +15,8 @@ import net.minecraft.world.event.BlockPositionSource
 import net.minecraft.world.event.GameEvent
 import net.minecraft.world.event.PositionSource
 import net.minecraft.world.event.listener.GameEventListener
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 class CandleEventListener(
     private val pos: BlockPos,
@@ -23,14 +25,9 @@ class CandleEventListener(
 
     override fun getPositionSource(): PositionSource = BlockPositionSource(pos)
 
-    override fun getRange(): Int {
-        val state = getState() ?: return 0
-        return state.get(CandleBlock.CANDLES).times(4)
-    }
+    override fun getRange(): Int = 16
 
     override fun getTriggerOrder(): GameEventListener.TriggerOrder = GameEventListener.TriggerOrder.BY_DISTANCE
-
-    private fun getState(): BlockState? = candle.getCurrentState()
 
     override fun listen(
         world: ServerWorld,
@@ -38,13 +35,13 @@ class CandleEventListener(
         emitter: GameEvent.Emitter,
         emitterPos: Vec3d
     ): Boolean {
+        if (!(event.matchesKey(ModEvents.CANDLE_IGNITE.registryKey()) || event.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()))) return false
         if (emitterPos == pos.toCenterPos()) return false
-        val state = getState() ?: return false
-        val lit = state.get(CandleBlock.LIT)
-        if (lit && event == ModEvents.CANDLE_IGNITE) return false
-        if (!lit && event == ModEvents.CANDLE_EXTINGUISH) return false
-        val eventData = CandleEventDataHandler.CandleEventData(event, emitterPos, pos.toCenterPos().subtract(emitterPos).length().toInt())
+        val dist = pos.toCenterPos().subtract(emitterPos).length()
+        val delay = dist.roundToLong()
+        Ritualis.LOGGER.info("$pos creating ${event.idAsString} - $dist : $delay")
+        val eventData = CandleEventDataHandler.CandleEventData(event, emitterPos, delay)
         candle.queueEvent(eventData)
-        return false
+        return true
     }
 }
