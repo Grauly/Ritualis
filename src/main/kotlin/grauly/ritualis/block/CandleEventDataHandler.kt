@@ -16,6 +16,12 @@ class CandleEventDataHandler(
         events.sortWith(compareBy { e: CandleEventData -> e.ticksTillArrival })
     }
 
+    fun isEventRedundant(event: CandleEventData): Boolean {
+        val precedingEvents = events.filter { e -> e.ticksTillArrival < event.ticksTillArrival }
+        if (precedingEvents.isEmpty()) return false
+        return precedingEvents.map { e -> e.event }.none { e -> e != event.event }
+    }
+
     private fun actEvents(eventHandler: (CandleEventData) -> Unit) {
         val pops = events.filter { e -> e.ticksTillArrival <= 0 }
         if (pops.isEmpty()) return
@@ -31,7 +37,6 @@ class CandleEventDataHandler(
         cooldown -= 1
         actEvents(eventHandler)
     }
-
     fun isOnCooldown(): Boolean = cooldown > 0
 
     companion object {
