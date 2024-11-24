@@ -37,6 +37,7 @@ class CandleEventDataHandler(
         cooldown -= 1
         actEvents(eventHandler)
     }
+
     fun isOnCooldown(): Boolean = cooldown > 0
 
     companion object {

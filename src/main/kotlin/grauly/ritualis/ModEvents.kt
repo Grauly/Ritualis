@@ -15,5 +15,6 @@ object ModEvents {
 
     }
 
-    private fun register(id: String, range: Int): RegistryEntry.Reference<GameEvent> = Registry.registerReference(Registries.GAME_EVENT, Identifier.of(Ritualis.MODID, id), GameEvent(range))
+    private fun register(id: String, range: Int): RegistryEntry.Reference<GameEvent> =
+        Registry.registerReference(Registries.GAME_EVENT, Identifier.of(Ritualis.MODID, id), GameEvent(range))
 }

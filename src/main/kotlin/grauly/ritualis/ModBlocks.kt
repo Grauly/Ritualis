@@ -35,6 +35,7 @@ object ModBlocks {
     fun init() {
         registerCandles()
     }
+
     private fun register(key: RegistryKey<Block>, block: Block): Block =
         Registry.register(Registries.BLOCK, key, block)
 

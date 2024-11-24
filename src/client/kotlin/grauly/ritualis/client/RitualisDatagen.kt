@@ -1,7 +1,7 @@
 package grauly.ritualis.client
 
-import grauly.ritualis.client.datagen.ModelDatagen
 import grauly.ritualis.client.datagen.BlockTagDatagen
+import grauly.ritualis.client.datagen.ModelDatagen
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
 

@@ -15,7 +15,11 @@ import kotlin.reflect.KFunction1
 
 object ModItems {
 
-    private fun registerPlainItem(path: String, constructor: KFunction1<Settings, Item>, settings: Settings = Settings()): Item {
+    private fun registerPlainItem(
+        path: String,
+        constructor: KFunction1<Settings, Item>,
+        settings: Settings = Settings()
+    ): Item {
         val id = Identifier.of(Ritualis.MODID, path)
         val key = RegistryKey.of(RegistryKeys.ITEM, id)
         settings.registryKey(key).useItemPrefixedTranslationKey()
@@ -31,8 +35,8 @@ object ModItems {
     }
 
     fun init() {
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register {group ->
-            ModBlocks.candles.forEach {candle -> group.add(candle.asItem())}
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register { group ->
+            ModBlocks.candles.forEach { candle -> group.add(candle.asItem()) }
         }
     }
 

@@ -25,6 +25,6 @@ object ModBlockEntities {
         )
     }
 
-    fun init() { }
+    fun init() {}
 
 }
