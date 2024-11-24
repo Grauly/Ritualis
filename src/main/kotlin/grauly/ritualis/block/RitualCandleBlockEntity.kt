@@ -27,6 +27,10 @@ class RitualCandleBlockEntity(
 
     override fun getEventListener(): CandleEventListener = listener
 
+    fun tick() {
+        dataHandler.tick(::processEvent)
+    }
+
     fun processEvent(event: CandleEventDataHandler.CandleEventData) {
         if (world !is ServerWorld) return
         val serverWorld = world as ServerWorld
@@ -47,19 +51,8 @@ class RitualCandleBlockEntity(
     fun queueEvent(event: CandleEventDataHandler.CandleEventData) {
         if (world !is ServerWorld) return
         val serverWorld = world as ServerWorld
-        Ritualis.LOGGER.info("$pos")
-        dataHandler.queueEvent(event, serverWorld)
-        val localState: BlockState = serverWorld.getBlockState(pos)!!
-        //if this ever fails due to long not being able to be made to int, something went CATASTROPHICALLY wrong.
-        serverWorld.scheduleBlockTick(pos, localState.block, event.ticksTillArrival.toInt())
+        dataHandler.queueEvent(event)
         serverWorld.markDirty(pos)
-    }
-
-    fun scheduledTick() {
-        if (world !is ServerWorld) return
-        val serverWorld = world as ServerWorld
-        Ritualis.LOGGER.info("$pos")
-        dataHandler.actEvents({ e -> processEvent(e) }, serverWorld)
     }
 
     private fun doExtinguish(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {

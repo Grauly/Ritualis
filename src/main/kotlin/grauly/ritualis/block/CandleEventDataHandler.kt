@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import grauly.ritualis.Ritualis
 import net.minecraft.registry.entry.RegistryEntry
-import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.GameEvent
 
@@ -12,36 +11,26 @@ class CandleEventDataHandler(
     private val events: MutableList<CandleEventData> = mutableListOf(),
     private var cooldown: Long = 0L
 ) {
-    private var lastAccessedTimestamp = -1L
 
-    fun queueEvent(eventData: CandleEventData, serverWorld: ServerWorld) {
-        handleTimeStamp(serverWorld)
+    fun queueEvent(eventData: CandleEventData) {
         events.add(eventData)
         events.sortWith(compareBy { e: CandleEventData -> e.ticksTillArrival })
-        Ritualis.LOGGER.info("queued $eventData, cooldown at: $cooldown now have \n$events")
-        //TODO spawn particle and such
     }
 
-    fun actEvents(eventHandler: (CandleEventData) -> Unit, serverWorld: ServerWorld) {
-        handleTimeStamp(serverWorld)
+    private fun actEvents(eventHandler: (CandleEventData) -> Unit) {
         val pops = events.filter { e -> e.ticksTillArrival <= 0 }
-        Ritualis.LOGGER.info("found ${pops.size} events to process")
+        if (pops.isEmpty()) return
         if (cooldown <= 0) {
-            Ritualis.LOGGER.info("acting on first: ${pops.first()}")
             pops.first().apply(eventHandler)
             cooldown = COOLDOWN_TIME_TICKS
-        } else {
-            Ritualis.LOGGER.info("disregarding, due to cooldown: $cooldown")
         }
         events.removeAll(pops)
     }
 
-    private fun handleTimeStamp(serverWorld: ServerWorld) {
-        if (lastAccessedTimestamp == -1L) lastAccessedTimestamp = serverWorld.time
-        val deltaTime = serverWorld.time - lastAccessedTimestamp
-        events.forEach { e -> e.ticksTillArrival -= deltaTime }
-        lastAccessedTimestamp = serverWorld.time
-        cooldown -= deltaTime
+    fun tick(eventHandler: (CandleEventData) -> Unit) {
+        events.forEach { e -> e.ticksTillArrival -= 1 }
+        cooldown -= 1
+        actEvents(eventHandler)
     }
 
     companion object {

@@ -6,6 +6,8 @@ import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
 import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
+import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.random.Random
@@ -24,7 +26,6 @@ class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProv
         if (world !is ServerWorld) return
         if (newState.block !is RitualCandle) return
         if (isLitCandle(state) == isLitCandle(newState)) return
-        Ritualis.LOGGER.info("$pos detected state change: $state -> $newState")
         val eventToDispatch = if (isLitCandle(newState)) ModEvents.CANDLE_IGNITE else ModEvents.CANDLE_EXTINGUISH
         world.emitGameEvent(null, eventToDispatch, pos)
     }
@@ -33,8 +34,16 @@ class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProv
         return RitualCandleBlockEntity(pos, state)
     }
 
-    override fun scheduledTick(state: BlockState, world: ServerWorld, pos: BlockPos, random: Random) {
-        super.scheduledTick(state, world, pos, random)
-        (world.getBlockEntity(pos) as RitualCandleBlockEntity).scheduledTick()
+    override fun <T : BlockEntity?> getTicker(
+        world: World,
+        state: BlockState,
+        type: BlockEntityType<T>
+    ): BlockEntityTicker<T>? {
+        if (world !is ServerWorld) return null
+        return BlockEntityTicker { world, pos, state, blockEntity ->
+            if (world !is ServerWorld) return@BlockEntityTicker
+            if (blockEntity !is RitualCandleBlockEntity) return@BlockEntityTicker
+            (blockEntity as RitualCandleBlockEntity).tick()
+        }
     }
 }
