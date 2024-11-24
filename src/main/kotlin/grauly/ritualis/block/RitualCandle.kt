@@ -1,7 +1,6 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModEvents
-import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
@@ -10,7 +9,6 @@ import net.minecraft.block.entity.BlockEntityTicker
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.random.Random
 import net.minecraft.world.World
 
 class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProvider {
