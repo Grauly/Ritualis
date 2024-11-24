@@ -1,6 +1,7 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModEvents
+import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
@@ -22,8 +23,9 @@ class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProv
         super.onStateReplaced(state, world, pos, newState, moved)
         if (world !is ServerWorld) return
         if (newState.block !is RitualCandle) return
-        if (state.get(LIT) == newState.get(LIT)) return
-        val eventToDispatch = if (newState.get(LIT) == true) ModEvents.CANDLE_IGNITE else ModEvents.CANDLE_EXTINGUISH
+        if (isLitCandle(state) == isLitCandle(newState)) return
+        Ritualis.LOGGER.info("$pos detected state change: $state -> $newState")
+        val eventToDispatch = if (isLitCandle(newState)) ModEvents.CANDLE_IGNITE else ModEvents.CANDLE_EXTINGUISH
         world.emitGameEvent(null, eventToDispatch, pos)
     }
 

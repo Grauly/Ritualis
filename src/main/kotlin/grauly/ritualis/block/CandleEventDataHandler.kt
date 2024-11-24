@@ -2,13 +2,15 @@ package grauly.ritualis.block
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import grauly.ritualis.Ritualis
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.GameEvent
 
 class CandleEventDataHandler(
-    private val events: MutableList<CandleEventData> = mutableListOf()
+    private val events: MutableList<CandleEventData> = mutableListOf(),
+    private var cooldown: Long = 0L
 ) {
     private var lastAccessedTimestamp = -1L
 
@@ -16,13 +18,21 @@ class CandleEventDataHandler(
         handleTimeStamp(serverWorld)
         events.add(eventData)
         events.sortWith(compareBy { e: CandleEventData -> e.ticksTillArrival })
+        Ritualis.LOGGER.info("queued $eventData, cooldown at: $cooldown now have \n$events")
         //TODO spawn particle and such
     }
 
     fun actEvents(eventHandler: (CandleEventData) -> Unit, serverWorld: ServerWorld) {
         handleTimeStamp(serverWorld)
         val pops = events.filter { e -> e.ticksTillArrival <= 0 }
-        pops.forEach(eventHandler)
+        Ritualis.LOGGER.info("found ${pops.size} events to process")
+        if (cooldown <= 0) {
+            Ritualis.LOGGER.info("acting on first: ${pops.first()}")
+            pops.first().apply(eventHandler)
+            cooldown = COOLDOWN_TIME_TICKS
+        } else {
+            Ritualis.LOGGER.info("disregarding, due to cooldown: $cooldown")
+        }
         events.removeAll(pops)
     }
 
@@ -31,15 +41,19 @@ class CandleEventDataHandler(
         val deltaTime = serverWorld.time - lastAccessedTimestamp
         events.forEach { e -> e.ticksTillArrival -= deltaTime }
         lastAccessedTimestamp = serverWorld.time
+        cooldown -= deltaTime
     }
 
     companion object {
         val CODEC: Codec<CandleEventDataHandler> =
             RecordCodecBuilder.create { instance: RecordCodecBuilder.Instance<CandleEventDataHandler> ->
                 instance.group(
-                    CandleEventData.CODEC.listOf().fieldOf("events").forGetter(CandleEventDataHandler::events)
+                    CandleEventData.CODEC.listOf().fieldOf("events").forGetter(CandleEventDataHandler::events),
+                    Codec.LONG.fieldOf("cooldown").forGetter(CandleEventDataHandler::cooldown)
                 ).apply(instance, ::CandleEventDataHandler)
             }
+
+        const val COOLDOWN_TIME_TICKS = 20L
     }
 
 

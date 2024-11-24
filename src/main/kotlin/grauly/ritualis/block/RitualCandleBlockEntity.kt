@@ -2,6 +2,7 @@ package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.ModEvents
+import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
 import net.minecraft.block.entity.BlockEntity
@@ -46,6 +47,7 @@ class RitualCandleBlockEntity(
     fun queueEvent(event: CandleEventDataHandler.CandleEventData) {
         if (world !is ServerWorld) return
         val serverWorld = world as ServerWorld
+        Ritualis.LOGGER.info("$pos")
         dataHandler.queueEvent(event, serverWorld)
         val localState: BlockState = serverWorld.getBlockState(pos)!!
         //if this ever fails due to long not being able to be made to int, something went CATASTROPHICALLY wrong.
@@ -56,6 +58,7 @@ class RitualCandleBlockEntity(
     fun scheduledTick() {
         if (world !is ServerWorld) return
         val serverWorld = world as ServerWorld
+        Ritualis.LOGGER.info("$pos")
         dataHandler.actEvents({ e -> processEvent(e) }, serverWorld)
     }
 
