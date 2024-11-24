@@ -2,7 +2,6 @@ package grauly.ritualis.block
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import grauly.ritualis.Ritualis
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.GameEvent
@@ -20,7 +19,7 @@ class CandleEventDataHandler(
     private fun actEvents(eventHandler: (CandleEventData) -> Unit) {
         val pops = events.filter { e -> e.ticksTillArrival <= 0 }
         if (pops.isEmpty()) return
-        if (cooldown <= 0) {
+        if (!isOnCooldown()) {
             pops.first().apply(eventHandler)
             cooldown = COOLDOWN_TIME_TICKS
         }
@@ -32,6 +31,8 @@ class CandleEventDataHandler(
         cooldown -= 1
         actEvents(eventHandler)
     }
+
+    fun isOnCooldown(): Boolean = cooldown > 0
 
     companion object {
         val CODEC: Codec<CandleEventDataHandler> =

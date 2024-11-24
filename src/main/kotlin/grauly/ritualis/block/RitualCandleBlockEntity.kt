@@ -2,7 +2,6 @@ package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.ModEvents
-import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
 import net.minecraft.block.entity.BlockEntity
@@ -53,6 +52,7 @@ class RitualCandleBlockEntity(
     fun queueEvent(event: CandleEventDataHandler.CandleEventData) {
         if (world !is ServerWorld) return
         val serverWorld = world as ServerWorld
+        if (dataHandler.isOnCooldown()) return
         dataHandler.queueEvent(event)
         serverWorld.markDirty(pos)
         spawnParticle(serverWorld, event.source, event.ticksTillArrival)
