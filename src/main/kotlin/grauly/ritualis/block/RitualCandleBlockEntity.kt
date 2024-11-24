@@ -11,10 +11,12 @@ import net.minecraft.nbt.NbtOps
 import net.minecraft.particle.DustParticleEffect
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleTypes
+import net.minecraft.particle.VibrationParticleEffect
 import net.minecraft.registry.RegistryWrapper
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.event.BlockPositionSource
 import net.minecraft.world.event.listener.GameEventListener
 
 class RitualCandleBlockEntity(
@@ -53,6 +55,12 @@ class RitualCandleBlockEntity(
         val serverWorld = world as ServerWorld
         dataHandler.queueEvent(event)
         serverWorld.markDirty(pos)
+        spawnParticle(serverWorld, event.source, event.ticksTillArrival)
+    }
+
+    private fun spawnParticle(serverWorld: ServerWorld, source: Vec3d, time: Long) {
+        val vibrationParticleEffect = VibrationParticleEffect(BlockPositionSource(pos), time.toInt())
+        serverWorld.spawnParticles(vibrationParticleEffect, source.x, source.y, source.z, 1, 0.0, 0.0, 0.0, 0.1)
     }
 
     private fun doExtinguish(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {
