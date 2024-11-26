@@ -12,6 +12,7 @@ class Ritualis : ModInitializer {
         ModBlocks.init()
         ModItems.init()
         ModBlockEntities.init()
+        ModParticles.init()
     }
 
     companion object {
