@@ -5,5 +5,6 @@ import net.fabricmc.api.ClientModInitializer
 class RitualisClient : ClientModInitializer {
 
     override fun onInitializeClient() {
+        ModClientParticles.init()
     }
 }
