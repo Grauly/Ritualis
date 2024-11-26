@@ -26,6 +26,8 @@ java {
 loom {
     splitEnvironmentSourceSets()
 
+    accessWidenerPath.set(file("src/main/resources/ritualis.accesswidener"))
+
     mods {
         register("ritualis") {
             sourceSet("main")
