@@ -2,6 +2,8 @@ package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.ModEvents
+import grauly.ritualis.particle.ExtinguishParticleEffect
+import grauly.ritualis.particle.IgnitionParticleEffect
 import net.minecraft.block.BlockState
 import net.minecraft.block.CandleBlock
 import net.minecraft.block.entity.BlockEntity
@@ -59,12 +61,26 @@ class RitualCandleBlockEntity(
         if (event.event.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()) && !CandleBlock.isLitCandle(localState)) return
         dataHandler.queueEvent(event)
         serverWorld.markDirty(pos)
-        spawnParticle(serverWorld, event.source, event.ticksTillArrival)
+        spawnParticle(serverWorld, event)
     }
 
-    private fun spawnParticle(serverWorld: ServerWorld, source: Vec3d, time: Long) {
-        val vibrationParticleEffect = VibrationParticleEffect(BlockPositionSource(pos), time.toInt())
-        serverWorld.spawnParticles(vibrationParticleEffect, source.x, source.y, source.z, 1, 0.0, 0.0, 0.0, 0.1)
+    private fun spawnParticle(serverWorld: ServerWorld, event: CandleEventDataHandler.CandleEventData) {
+        val particleEffect = if (event.event.matchesKey(ModEvents.CANDLE_IGNITE.registryKey())) {
+            IgnitionParticleEffect(BlockPositionSource(pos), event.ticksTillArrival.toInt())
+        } else {
+            ExtinguishParticleEffect(BlockPositionSource(pos), event.ticksTillArrival.toInt())
+        }
+        serverWorld.spawnParticles(
+            particleEffect,
+            event.source.x,
+            event.source.y,
+            event.source.z,
+            1,
+            0.0,
+            0.0,
+            0.0,
+            0.1
+        )
     }
 
     private fun doExtinguish(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {
