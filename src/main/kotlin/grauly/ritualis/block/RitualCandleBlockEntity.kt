@@ -41,11 +41,11 @@ class RitualCandleBlockEntity(
         val receivedEvent = event.event
         val lit = localState.get(CandleBlock.LIT)
         if (receivedEvent.matchesKey(ModEvents.CANDLE_IGNITE.registryKey()) && !lit) {
-            doIgnite(event.source, localState, serverWorld)
+            doIgnite(localState, serverWorld)
             return
         }
         if (receivedEvent.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()) && lit) {
-            doExtinguish(event.source, localState, serverWorld)
+            doExtinguish(localState, serverWorld)
             return
         }
         serverWorld.markDirty(pos)
@@ -83,33 +83,14 @@ class RitualCandleBlockEntity(
         )
     }
 
-    private fun doExtinguish(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {
+    private fun doExtinguish(state: BlockState, serverWorld: ServerWorld) {
         CandleBlock.extinguish(null, state, serverWorld, pos)
         serverWorld.markDirty(pos)
-        particleLine(emitterPos, pos.toCenterPos(), DustParticleEffect(0, .5f), serverWorld, 10)
     }
 
-    private fun doIgnite(emitterPos: Vec3d, state: BlockState, serverWorld: ServerWorld) {
+    private fun doIgnite(state: BlockState, serverWorld: ServerWorld) {
         serverWorld.setBlockState(pos, state.with(CandleBlock.LIT, true))
         serverWorld.markDirty(pos)
-        particleLine(emitterPos, pos.toCenterPos(), ParticleTypes.FLAME, serverWorld)
-    }
-
-    private fun particleLine(
-        from: Vec3d,
-        to: Vec3d,
-        particle: ParticleEffect,
-        serverWorld: ServerWorld,
-        resolution: Int = 2
-    ) {
-        val deltaVector = to.subtract(from)
-        val length = deltaVector.length()
-        val pointNum = (length * resolution).toInt()
-        for (i in 0..pointNum) {
-            val delta = i.div(pointNum.toDouble())
-            val point = from.lerp(to, delta)
-            serverWorld.spawnParticles(particle, point.x, point.y, point.z, 0, 0.0, 0.0, 0.0, 0.0)
-        }
     }
 
     override fun readNbt(nbt: NbtCompound, registries: RegistryWrapper.WrapperLookup) {
