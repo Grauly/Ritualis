@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier
 object ModParticles {
     val IGNITION = register(FabricParticleTypes.complex(IgnitionParticleEffect.CODEC, IgnitionParticleEffect.PACKET_CODEC), "ignition")
     val EXTINGUISH = register(FabricParticleTypes.complex(ExtinguishParticleEffect.CODEC, ExtinguishParticleEffect.PACKET_CODEC), "extinguish")
+    val RITUAL_SPARK = register(FabricParticleTypes.simple(), "ritual_spark")
 
     private fun <T: ParticleEffect>register(particleType: ParticleType<T>, id: String): ParticleType<T> =
         Registry.register(Registries.PARTICLE_TYPE, Identifier.of(Ritualis.MODID, id), particleType)
