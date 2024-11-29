@@ -68,7 +68,7 @@ class RitualCandleBlockEntity(
         val particleEffect = if (event.event.matchesKey(ModEvents.CANDLE_IGNITE.registryKey())) {
             IgnitionParticleEffect(pos.toCenterPos(), event.ticksTillArrival.toInt())
         } else {
-            ExtinguishParticleEffect(BlockPositionSource(pos), event.ticksTillArrival.toInt())
+            ExtinguishParticleEffect(pos.toCenterPos(), event.ticksTillArrival.toInt())
         }
         serverWorld.spawnParticles(
             particleEffect,
