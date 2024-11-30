@@ -1,6 +1,7 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModEvents
+import net.minecraft.block.CandleBlock
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
@@ -30,8 +31,10 @@ class CandleEventListener(
     ): Boolean {
         if (!(event.matchesKey(ModEvents.CANDLE_IGNITE.registryKey()) || event.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()))) return false
         if (emitterPos == pos.toCenterPos()) return false
-        val dist = pos.toCenterPos().subtract(emitterPos).length()
-        val delay = dist.roundToLong()
+        val signalDistance = pos.toCenterPos().subtract(emitterPos).length()
+        val senderPower: Int = if (emitter.affectedState != null && emitter.affectedState?.getOrEmpty(CandleBlock.CANDLES)?.isPresent!!) {emitter.affectedState?.get(CandleBlock.CANDLES)?.times(4)!!} else {16}
+        if (senderPower < signalDistance) return false
+        val delay = signalDistance.roundToLong()
         val eventData = CandleEventDataHandler.CandleEventData(event, emitterPos, delay)
         candle.queueEvent(eventData)
         return true

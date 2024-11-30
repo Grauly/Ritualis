@@ -10,6 +10,7 @@ import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
+import net.minecraft.world.event.GameEvent
 
 class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProvider {
 
@@ -25,7 +26,7 @@ class RitualCandle(settings: Settings?) : CandleBlock(settings), BlockEntityProv
         if (newState.block !is RitualCandle) return
         if (isLitCandle(state) == isLitCandle(newState)) return
         val eventToDispatch = if (isLitCandle(newState)) ModEvents.CANDLE_IGNITE else ModEvents.CANDLE_EXTINGUISH
-        world.emitGameEvent(null, eventToDispatch, pos)
+        world.emitGameEvent(eventToDispatch, pos, GameEvent.Emitter.of(newState))
     }
 
     override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
