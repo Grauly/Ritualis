@@ -10,6 +10,7 @@ import net.minecraft.block.entity.BlockEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
 import net.minecraft.particle.ParticleEffect
+import net.minecraft.particle.ParticleTypes
 import net.minecraft.registry.RegistryWrapper
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
@@ -74,12 +75,29 @@ class RitualCandleBlockEntity(
     private fun doExtinguish(state: BlockState, serverWorld: ServerWorld) {
         CandleBlock.extinguish(null, state, serverWorld, pos)
         serverWorld.playSoundAtBlockCenter(pos, SoundEvents.BLOCK_CANDLE_EXTINGUISH, SoundCategory.BLOCKS, 1f, 1f, true)
+        spawnParticle(serverWorld, ParticleTypes.DUST_PLUME, pos.toCenterPos(), amount = 3)
         serverWorld.markDirty(pos)
     }
 
     private fun doIgnite(state: BlockState, serverWorld: ServerWorld) {
         serverWorld.setBlockState(pos, state.with(CandleBlock.LIT, true))
-        serverWorld.playSoundAtBlockCenter(pos, SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1f, 1f, true)
+        serverWorld.playSoundAtBlockCenter(
+            pos,
+            SoundEvents.ENTITY_ZOMBIE_VILLAGER_CONVERTED,
+            SoundCategory.BLOCKS,
+            1f,
+            1f,
+            true
+        )
+        for (i in 0..5) {
+            spawnParticle(
+                serverWorld,
+                ParticleTypes.FLAME,
+                pos.toCenterPos(),
+                direction = Vec3d(0.0, serverWorld.random.nextDouble() * 0.3, 0.0),
+                speed = 0.5
+            )
+        }
         serverWorld.markDirty(pos)
     }
 
@@ -101,22 +119,24 @@ class RitualCandleBlockEntity(
     private fun spawnParticle(
         serverWorld: ServerWorld,
         particle: ParticleEffect,
-        point: Vec3d,
-        amount: Int = 0,
+        location: Vec3d,
+        amount: Int = 1,
         direction: Vec3d = Vec3d(0.0, 0.0, 0.0),
         speed: Double = 1.0
     ) {
-        serverWorld.spawnParticles(
-            particle,
-            point.x,
-            point.y,
-            point.z,
-            amount,
-            direction.x,
-            direction.y,
-            direction.z,
-            speed
-        )
+        for (i in 1..amount) {
+            serverWorld.spawnParticles(
+                particle,
+                location.x,
+                location.y,
+                location.z,
+                0,
+                direction.x,
+                direction.y,
+                direction.z,
+                speed
+            )
+        }
     }
 
     companion object {
