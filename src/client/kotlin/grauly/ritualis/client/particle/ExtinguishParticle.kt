@@ -16,6 +16,11 @@ class ExtinguishParticle(
 ) :
     SpriteBillboardParticle(world, x, y, z, 0.0, 0.0, 0.0) {
 
+    init {
+        scale(1.5f)
+        this.maxAge = maxAge
+    }
+
     override fun getType(): ParticleTextureSheet = ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT
 
     override fun tick() {

@@ -9,6 +9,10 @@ import net.minecraft.util.math.Vec3d
 class IgnitionParticle(world: ClientWorld?, x: Double, y: Double, z: Double, private val target: Vec3d, maxAge: Int) :
     SpriteBillboardParticle(world, x, y, z, 0.0, 0.0, 0.0) {
 
+    init {
+        this.maxAge = maxAge
+    }
+
     override fun tick() {
         prevPosX = x
         prevPosY = y
@@ -18,7 +22,7 @@ class IgnitionParticle(world: ClientWorld?, x: Double, y: Double, z: Double, pri
             return
         }
         val remainingTime = maxAge - age
-        val durationFraction: Double = 1.0 / remainingTime
+        val durationFraction: Double = 1.0.div(remainingTime)
         x = MathHelper.lerp(durationFraction, x, target.x)
         y = MathHelper.lerp(durationFraction, y, target.y)
         z = MathHelper.lerp(durationFraction, z, target.z)
