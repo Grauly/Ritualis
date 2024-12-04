@@ -14,6 +14,7 @@ import net.minecraft.particle.ParticleTypes
 import net.minecraft.registry.RegistryWrapper
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvent
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -72,23 +73,21 @@ class RitualCandleBlockEntity(
         spawnParticle(serverWorld, particleEffect, event.source, 1, speed = 0.1)
     }
 
+    private fun playSound(serverWorld: ServerWorld, event: SoundEvent, volume: Float = 1f, pitch: Float = 1f) {
+        val worldPos = pos.toCenterPos()
+        serverWorld.playSound(null, worldPos.x, worldPos.y, worldPos.z, event, SoundCategory.BLOCKS, volume, pitch, serverWorld.random.nextLong())
+    }
+
     private fun doExtinguish(state: BlockState, serverWorld: ServerWorld) {
         CandleBlock.extinguish(null, state, serverWorld, pos)
-        serverWorld.playSoundAtBlockCenter(pos, SoundEvents.BLOCK_CANDLE_EXTINGUISH, SoundCategory.BLOCKS, 1f, 1f, true)
         spawnParticle(serverWorld, ParticleTypes.DUST_PLUME, pos.toCenterPos(), amount = 3)
+        playSound(serverWorld, SoundEvents.BLOCK_CANDLE_EXTINGUISH, volume = 2f)
         serverWorld.markDirty(pos)
     }
 
     private fun doIgnite(state: BlockState, serverWorld: ServerWorld) {
         serverWorld.setBlockState(pos, state.with(CandleBlock.LIT, true))
-        serverWorld.playSoundAtBlockCenter(
-            pos,
-            SoundEvents.ENTITY_ZOMBIE_VILLAGER_CONVERTED,
-            SoundCategory.BLOCKS,
-            1f,
-            1f,
-            true
-        )
+        playSound(serverWorld, SoundEvents.ENTITY_BLAZE_SHOOT, .3f, 1.7f)
         for (i in 0..5) {
             spawnParticle(
                 serverWorld,
