@@ -34,24 +34,11 @@ loom {
             sourceSet("client")
         }
     }
-    runs {
-        create("datagen") {
-            client()
-
-            name = "Minecraft Data"
-            vmArg("-Dfabric-api.datagen")
-            vmArg("-Dfabric-api.datagen.output-dir=${project.file("src/main/generated")}")
-            vmArg("-Dfabric-api.datagen.modid=ritualis")
-            vmArg("-Dporting_lib.datagen.existing_resources=${project.file("src/main/resources")}")
-
-            environmentVariable("DATAGEN", "TRUE")
-        }
-    }
 }
 
 fabricApi {
     configureDataGeneration {
-        createRunConfiguration = false
+        client = true;
     }
 }
 
