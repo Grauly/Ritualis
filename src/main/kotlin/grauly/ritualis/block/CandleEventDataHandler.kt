@@ -7,11 +7,13 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.GameEvent
 
 class CandleEventDataHandler(
-    private val events: MutableList<CandleEventData> = mutableListOf(),
+    private var events: MutableList<CandleEventData> = mutableListOf(),
     private var cooldown: Long = 0L
 ) {
 
     fun queueEvent(eventData: CandleEventData) {
+        //TODO: fix, this is very ugly
+        events = events.toMutableList()
         events.add(eventData)
         events.sortWith(compareBy { e: CandleEventData -> e.ticksTillArrival })
     }
@@ -26,9 +28,11 @@ class CandleEventDataHandler(
         val pops = events.filter { e -> e.ticksTillArrival <= 0 }
         if (pops.isEmpty()) return
         if (!isOnCooldown()) {
-            pops.first().apply(eventHandler)
+            pops.last().apply(eventHandler)
             cooldown = COOLDOWN_TIME_TICKS
         }
+        //TODO: fix, this is very ugly
+        events = events.toMutableList()
         events.removeAll(pops)
     }
 
