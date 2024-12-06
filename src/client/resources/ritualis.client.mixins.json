@@ -4,7 +4,6 @@
   "package": "grauly.ritualis.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "ItemModelGeneratorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
