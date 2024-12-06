@@ -2,6 +2,7 @@ package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.ModEvents
+import grauly.ritualis.Ritualis
 import grauly.ritualis.particle.ExtinguishParticleEffect
 import grauly.ritualis.particle.IgnitionParticleEffect
 import net.minecraft.block.BlockState
@@ -104,7 +105,9 @@ class RitualCandleBlockEntity(
         super.readNbt(nbt, registries)
         val regOps = registries.getOps(NbtOps.INSTANCE)
         if (nbt.contains(EVENT_QUEUE_KEY)) {
-            CandleEventDataHandler.CODEC.parse(regOps, nbt).ifSuccess { handler -> dataHandler = handler }
+            CandleEventDataHandler.CODEC.parse(regOps, nbt.get(EVENT_QUEUE_KEY))
+                .resultOrPartial { error -> Ritualis.LOGGER.info("Failed to deserialize event data at $pos, with error: $error") }
+                .ifPresent { handler -> dataHandler = handler }
         }
     }
 
@@ -112,7 +115,8 @@ class RitualCandleBlockEntity(
         super.writeNbt(nbt, registries)
         val regOps = registries.getOps(NbtOps.INSTANCE)
         CandleEventDataHandler.CODEC.encodeStart(regOps, dataHandler)
-            .ifSuccess { encoded -> nbt.put(EVENT_QUEUE_KEY, encoded) }
+            .resultOrPartial { error -> Ritualis.LOGGER.info("Failed to encode event data at $pos, with error: $error") }
+            .ifPresent { encoded -> nbt.put(EVENT_QUEUE_KEY, encoded) }
     }
 
     private fun spawnParticle(
