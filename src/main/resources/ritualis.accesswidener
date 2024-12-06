@@ -1,2 +1,1 @@
 accessWidener v2 named
-extendable method net/minecraft/client/particle/VibrationParticle <init> (Lnet/minecraft/client/world/ClientWorld;DDDLnet/minecraft/world/event/PositionSource;I)V
