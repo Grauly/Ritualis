@@ -1,5 +1,6 @@
 package grauly.ritualis.client.datagen
 
+import grauly.ritualis.ModBlockTags
 import grauly.ritualis.ModBlocks
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider
@@ -16,8 +17,10 @@ class BlockTagDatagen(
 
     override fun configure(lookup: RegistryWrapper.WrapperLookup?) {
         val candles = getOrCreateTagBuilder(BlockTags.CANDLES)
+        val ritualCandles = getOrCreateTagBuilder(ModBlockTags.RITUAL_CANDLES)
         ModBlocks.candles.forEach { candle ->
             candles.add(candle)
+            ritualCandles.add(candle)
         }
     }
 }
