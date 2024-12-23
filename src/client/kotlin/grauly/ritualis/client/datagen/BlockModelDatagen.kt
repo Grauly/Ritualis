@@ -21,6 +21,7 @@ object BlockModelDatagen {
                 blockStateModelGenerator.blockStateCollector
             )
         }
+        blockStateModelGenerator.registerGeneric(ModBlocks.FLOATING_BOOK)
     }
 
     private fun createBlockStateVariant(candleNumber: Int, lit: Boolean, colorPrefix: String): BlockStateVariant? {

@@ -1,6 +1,7 @@
 package grauly.ritualis.client.datagen
 
 import grauly.ritualis.ModBlocks
+import grauly.ritualis.ModItems
 import grauly.ritualis.Ritualis
 import net.minecraft.client.data.ItemModelGenerator
 import net.minecraft.client.data.ItemModels
@@ -16,6 +17,7 @@ object ItemModelDatagen {
             val item = ModBlocks.candles[index].asItem()
             generateCandleItemModel(item, "${color.getName()}_", itemModelGenerator)
         }
+        itemModelGenerator.register(ModItems.FLOATING_BOOK_ITEM)
     }
 
     private fun generateCandleItemModel(
