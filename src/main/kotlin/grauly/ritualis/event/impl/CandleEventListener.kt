@@ -8,6 +8,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.GameEvent
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 abstract class CandleEventListener(
@@ -26,7 +27,7 @@ abstract class CandleEventListener(
         //ok, it might say its one, but it aint got candles?
         if (emitter.affectedState!!.getOrEmpty(CandleBlock.CANDLES).isEmpty) return false
         val senderPower: Int = emitter.affectedState!!.get(CandleBlock.CANDLES) * 4
-        return pos.isWithinDistance(emitterPosition, senderPower.toDouble())
+        return pos.getSquaredDistanceFromCenter(emitterPosition.x, emitterPosition.y, emitterPosition.z) <= senderPower.toDouble().pow(2)
     }
 
     override fun calculatePropagationDelay(emitterPosition: Vec3d): Int =
