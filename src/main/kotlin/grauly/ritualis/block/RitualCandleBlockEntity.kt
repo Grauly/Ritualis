@@ -30,55 +30,16 @@ class RitualCandleBlockEntity(
     state: BlockState
 ) : BlockEntity(ModBlockEntities.RITUAL_CANDLE_ENTITY, pos, state),
     GameEventListener.Holder<MultiEventListener> {
+
     private val listener = MultiEventListener(pos, shouldTrackCooldown = true, subEventListeners = listOf(
         CandleExtinguishListener(pos, this),
         CandleIgniteListener(pos, this)
     ))
-    private var dataHandler = CandleEventDataHandler()
 
     override fun getEventListener(): MultiEventListener = listener
 
     fun tick() {
-        dataHandler.tick(::processEvent)
-    }
-
-    private fun processEvent(event: CandleEventDataHandler.CandleEventData) {
-        if (world !is ServerWorld) return
-        val serverWorld = world as ServerWorld
-        val localState: BlockState = serverWorld.getBlockState(pos)!!
-        val receivedEvent = event.event
-        val lit = localState.get(CandleBlock.LIT)
-        if (receivedEvent.matchesKey(ModEvents.CANDLE_IGNITE.registryKey()) && !lit) {
-            doIgnite(localState, serverWorld)
-            return
-        }
-        if (receivedEvent.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()) && lit) {
-            doExtinguish(localState, serverWorld)
-            return
-        }
-        serverWorld.markDirty(pos)
-    }
-
-    fun queueEvent(event: CandleEventDataHandler.CandleEventData) {
-        if (world !is ServerWorld) return
-        val serverWorld = world as ServerWorld
-        val localState: BlockState = serverWorld.getBlockState(pos)!!
-        if (dataHandler.isOnCooldown()) return
-        if (dataHandler.isEventRedundant(event)) return
-        if (event.event.matchesKey(ModEvents.CANDLE_IGNITE.registryKey()) && CandleBlock.isLitCandle(localState)) return
-        if (event.event.matchesKey(ModEvents.CANDLE_EXTINGUISH.registryKey()) && !CandleBlock.isLitCandle(localState)) return
-        dataHandler.queueEvent(event)
-        serverWorld.markDirty(pos)
-        spawnParticle(serverWorld, event)
-    }
-
-    private fun spawnParticle(serverWorld: ServerWorld, event: CandleEventDataHandler.CandleEventData) {
-        val particleEffect = if (event.event.matchesKey(ModEvents.CANDLE_IGNITE.registryKey())) {
-            IgnitionParticleEffect(pos.toCenterPos(), event.ticksTillArrival.toInt())
-        } else {
-            ExtinguishParticleEffect(pos.toCenterPos(), event.ticksTillArrival.toInt())
-        }
-        serverWorld.spawnDirectionalParticle(particleEffect, event.source, speed = 0.1)
+        listener.tick()
     }
 
     private fun playSound(serverWorld: ServerWorld, event: SoundEvent, volume: Float = 1f, pitch: Float = 1f) {
@@ -109,23 +70,11 @@ class RitualCandleBlockEntity(
 
     override fun readNbt(nbt: NbtCompound, registries: RegistryWrapper.WrapperLookup) {
         super.readNbt(nbt, registries)
-        val regOps = registries.getOps(NbtOps.INSTANCE)
-        if (nbt.contains(EVENT_QUEUE_KEY)) {
-            CandleEventDataHandler.CODEC.parse(regOps, nbt.get(EVENT_QUEUE_KEY))
-                .resultOrPartial { error -> Ritualis.LOGGER.info("Failed to deserialize event data at $pos, with error: $error") }
-                .ifPresent { handler -> dataHandler = handler }
-        }
+        listener.readNbt(nbt, registries)
     }
 
     override fun writeNbt(nbt: NbtCompound, registries: RegistryWrapper.WrapperLookup) {
         super.writeNbt(nbt, registries)
-        val regOps = registries.getOps(NbtOps.INSTANCE)
-        CandleEventDataHandler.CODEC.encodeStart(regOps, dataHandler)
-            .resultOrPartial { error -> Ritualis.LOGGER.info("Failed to encode event data at $pos, with error: $error") }
-            .ifPresent { encoded -> nbt.put(EVENT_QUEUE_KEY, encoded) }
-    }
-
-    companion object {
-        private const val EVENT_QUEUE_KEY: String = "events"
+        listener.writeNbt(nbt, registries)
     }
 }
