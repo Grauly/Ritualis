@@ -1,5 +1,6 @@
 package grauly.ritualis
 
+import grauly.ritualis.block.FloatingBook
 import grauly.ritualis.block.RitualCandle
 import net.minecraft.block.AbstractBlock
 import net.minecraft.block.Block
@@ -9,10 +10,24 @@ import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.util.Identifier
+import kotlin.reflect.KFunction1
 
 object ModBlocks {
 
     val candles = mutableListOf<Block>()
+
+    val FLOATING_BOOK = register("floating_book", ::FloatingBook)
+
+    private fun register(
+        blockID: String,
+        constructor: KFunction1<AbstractBlock.Settings, Block>,
+        settings: AbstractBlock.Settings = AbstractBlock.Settings.create()
+    ): Block {
+        val id = Identifier.of(Ritualis.MODID, blockID)
+        val key = RegistryKey.of(RegistryKeys.BLOCK, id)
+        settings.registryKey(key)
+        return register(key, constructor.call(settings))
+    }
 
     private fun registerCandles() {
         registerCandle("candle")
@@ -40,7 +55,7 @@ object ModBlocks {
         Registry.register(Registries.BLOCK, key, block)
 
     private fun register(id: Identifier, block: Block): Block =
-        Registry.register(Registries.BLOCK, id, block)
+        register(RegistryKey.of(RegistryKeys.BLOCK, id), block)
 
     private fun register(id: String, block: Block): Block =
         register(Identifier.of(Ritualis.MODID, id), block)

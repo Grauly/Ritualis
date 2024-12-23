@@ -1,5 +1,6 @@
 package grauly.ritualis
 
+import grauly.ritualis.block.FloatingBookBlockEntity
 import grauly.ritualis.block.RitualCandleBlockEntity
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.minecraft.block.Block
@@ -12,6 +13,7 @@ import net.minecraft.util.Identifier
 
 object ModBlockEntities {
     val RITUAL_CANDLE_ENTITY = register(::RitualCandleBlockEntity, "ritual_candle", *ModBlocks.candles.toTypedArray())
+    val FLOATING_BOOK_ENTITY = register(::FloatingBookBlockEntity, "floating_book", ModBlocks.FLOATING_BOOK)
 
     private fun <T : BlockEntity> register(
         blockEntity: FabricBlockEntityTypeBuilder.Factory<T>,
