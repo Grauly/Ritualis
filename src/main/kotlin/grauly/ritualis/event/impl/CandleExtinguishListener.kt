@@ -4,6 +4,7 @@ import grauly.ritualis.ModEvents
 import grauly.ritualis.block.RitualCandleBlockEntity
 import grauly.ritualis.extensions.spawnDirectionalParticle
 import grauly.ritualis.particle.ExtinguishParticleEffect
+import net.minecraft.block.CandleBlock
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
@@ -20,6 +21,11 @@ class CandleExtinguishListener(
             ExtinguishParticleEffect(pos.toCenterPos(), delay),
             emitterPosition
         )
+    }
+
+    override fun isEventListenable(world: ServerWorld, emitterPosition: Vec3d, emitter: GameEvent.Emitter): Boolean {
+        if(!candleBlockEntity.cachedState.get(CandleBlock.LIT)) return false
+        return super.isEventListenable(world, emitterPosition, emitter)
     }
 
     override fun onEventReceived(originalSource: Vec3d) {
