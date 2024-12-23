@@ -12,7 +12,9 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.event.GameEvent.Emitter
 import kotlin.math.max
 
-abstract class SimpleDelayedEventListener : TypedEventListener {
+abstract class SimpleDelayedEventListener(
+    private val shouldTrackCooldown: Boolean = true
+) : TypedEventListener {
 
     private val eventQueue: MutableList<PositionEventReference> = mutableListOf()
     private var cooldown: Int = 0
@@ -39,12 +41,12 @@ abstract class SimpleDelayedEventListener : TypedEventListener {
 
     protected abstract fun onEventReceived(originalSource: Vec3d)
 
-    override fun isOnCooldown(): Boolean = cooldown != 0
+    override fun isOnCooldown(): Boolean = shouldTrackCooldown && cooldown != 0
 
     protected abstract fun getCooldownTime(): Int
 
     override fun tick() {
-        cooldown = max(0, cooldown - 1)
+        if(shouldTrackCooldown) cooldown = max(0, cooldown - 1)
         eventQueue.forEach { event -> event.delay = max(0, event.delay - 1) }
         onEventReceived(
             eventQueue.last { event -> event.delay == 0 }.triggerPosition
