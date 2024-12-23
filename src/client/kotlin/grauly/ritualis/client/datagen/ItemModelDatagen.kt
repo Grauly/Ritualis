@@ -15,7 +15,6 @@ object ItemModelDatagen {
             val color = Ritualis.COLOR_ORDER[index - 1]
             val item = ModBlocks.candles[index].asItem()
             generateCandleItemModel(item, "${color.getName()}_", itemModelGenerator)
-
         }
     }
 
