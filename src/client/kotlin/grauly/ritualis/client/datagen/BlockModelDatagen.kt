@@ -23,7 +23,7 @@ object BlockModelDatagen {
         }
     }
 
-    private fun bsv(candleNumber: Int, lit: Boolean, colorPrefix: String): BlockStateVariant? {
+    private fun createBlockStateVariant(candleNumber: Int, lit: Boolean, colorPrefix: String): BlockStateVariant? {
         val candleSuffix = StringBuilder("candle")
         if (candleNumber > 1) candleSuffix.append("s")
         val modelPath = StringBuilder("block/${colorPrefix}candle_${numbers[candleNumber - 1]}_${candleSuffix}")
@@ -38,8 +38,8 @@ object BlockModelDatagen {
     ) {
         val variantMap = BlockStateVariantMap.create(Properties.CANDLES, Properties.LIT)
         for (candleNum: Int in 1..4) {
-            variantMap.register(candleNum, false, bsv(candleNum, false, colorPrefix))
-            variantMap.register(candleNum, true, bsv(candleNum, true, colorPrefix))
+            variantMap.register(candleNum, false, createBlockStateVariant(candleNum, false, colorPrefix))
+            variantMap.register(candleNum, true, createBlockStateVariant(candleNum, true, colorPrefix))
         }
         blockStateCollector.accept(VariantsBlockStateSupplier.create(candle).coordinate(variantMap))
     }
