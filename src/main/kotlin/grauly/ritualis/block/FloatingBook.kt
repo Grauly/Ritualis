@@ -6,12 +6,8 @@ import net.minecraft.block.BlockWithEntity
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.util.math.BlockPos
 
-class FloatingBook(settings: Settings?) : BlockWithEntity(settings) {
-    override fun getCodec(): MapCodec<out BlockWithEntity> {
-        TODO("Not yet implemented")
-    }
+class FloatingBook(settings: Settings) : BlockWithEntity(settings) {
+    override fun getCodec(): MapCodec<out BlockWithEntity> = createCodec(::FloatingBook)
 
-    override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity? {
-        TODO("Not yet implemented")
-    }
+    override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = FloatingBookBlockEntity(pos, state)
 }
