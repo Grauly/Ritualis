@@ -14,6 +14,10 @@ abstract class CandleEventListener(
     protected val pos: BlockPos,
     protected val candleBlockEntity: RitualCandleBlockEntity
 ) : SimpleDelayedEventListener(false) {
+
+    override fun isEventFromSelf(world: ServerWorld, emitterPosition: Vec3d, emitter: GameEvent.Emitter): Boolean =
+        emitterPosition == pos.toCenterPos()
+
     override fun isEventListenable(world: ServerWorld, emitterPosition: Vec3d, emitter: GameEvent.Emitter): Boolean {
         //if its not a block, I don't care right now
         if (emitter.affectedState == null) return true

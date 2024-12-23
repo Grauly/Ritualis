@@ -20,10 +20,12 @@ abstract class SimpleDelayedEventListener(
     private var cooldown: Int = 0
 
     protected abstract fun isEventListenable(world: ServerWorld, emitterPosition: Vec3d, emitter: Emitter): Boolean
+    protected abstract fun isEventFromSelf(world: ServerWorld, emitterPosition: Vec3d, emitter: Emitter): Boolean
     protected open fun getPropagationTicksPerBlock(): Int = 1
     protected abstract fun calculatePropagationDelay(emitterPosition: Vec3d): Int
 
     override fun trigger(world: ServerWorld, emitterPosition: Vec3d, emitter: Emitter): Boolean {
+        if (isEventFromSelf(world, emitterPosition, emitter)) return false
         if (!isEventListenable(world, emitterPosition, emitter)) return false
         if (isOnCooldown()) return false
 
@@ -46,7 +48,7 @@ abstract class SimpleDelayedEventListener(
     protected abstract fun getCooldownTime(): Int
 
     override fun tick() {
-        if(shouldTrackCooldown) cooldown = max(0, cooldown - 1)
+        if (shouldTrackCooldown) cooldown = max(0, cooldown - 1)
         eventQueue.forEach { event -> event.delay = max(0, event.delay - 1) }
         val events = eventQueue.filter { event -> event.delay == 0 }
         if (events.isEmpty()) return
