@@ -4,7 +4,6 @@ import grauly.ritualis.ModEvents
 import grauly.ritualis.block.RitualCandleBlockEntity
 import grauly.ritualis.extensions.spawnDirectionalParticle
 import grauly.ritualis.particle.ExtinguishParticleEffect
-import net.minecraft.block.CandleBlock
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
@@ -24,7 +23,7 @@ class CandleExtinguishListener(
     }
 
     override fun onEventReceived(originalSource: Vec3d) {
-        candleBlockEntity.world?.setBlockState(pos, candleBlockEntity.cachedState.with(CandleBlock.LIT, false))
+        candleBlockEntity.doExtinguish(candleBlockEntity.cachedState, candleBlockEntity.world as ServerWorld)
     }
 
     override fun accepts(incomingEvent: RegistryEntry<GameEvent>): Boolean =

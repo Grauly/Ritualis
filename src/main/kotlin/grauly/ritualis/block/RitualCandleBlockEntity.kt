@@ -86,14 +86,14 @@ class RitualCandleBlockEntity(
         serverWorld.playSound(null, worldPos.x, worldPos.y, worldPos.z, event, SoundCategory.BLOCKS, volume, pitch, serverWorld.random.nextLong())
     }
 
-    private fun doExtinguish(state: BlockState, serverWorld: ServerWorld) {
+    fun doExtinguish(state: BlockState, serverWorld: ServerWorld) {
         CandleBlock.extinguish(null, state, serverWorld, pos)
         for (i in 0..3) serverWorld.spawnDirectionalParticle(ParticleTypes.DUST_PLUME, pos.toCenterPos())
         playSound(serverWorld, SoundEvents.BLOCK_CANDLE_EXTINGUISH, volume = 2f)
         serverWorld.markDirty(pos)
     }
 
-    private fun doIgnite(state: BlockState, serverWorld: ServerWorld) {
+    fun doIgnite(state: BlockState, serverWorld: ServerWorld) {
         serverWorld.setBlockState(pos, state.with(CandleBlock.LIT, true))
         playSound(serverWorld, SoundEvents.ENTITY_BLAZE_SHOOT, .3f, 1.7f)
         for (i in 0..5) {
