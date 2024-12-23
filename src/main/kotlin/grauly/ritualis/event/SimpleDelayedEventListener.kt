@@ -48,9 +48,9 @@ abstract class SimpleDelayedEventListener(
     override fun tick() {
         if(shouldTrackCooldown) cooldown = max(0, cooldown - 1)
         eventQueue.forEach { event -> event.delay = max(0, event.delay - 1) }
-        onEventReceived(
-            eventQueue.last { event -> event.delay == 0 }.triggerPosition
-        )
+        val events = eventQueue.filter { event -> event.delay == 0 }
+        if (events.isEmpty()) return
+        onEventReceived(events.last().triggerPosition)
     }
 
     override fun writeNbt(nbt: NbtCompound, registries: RegistryWrapper.WrapperLookup) {
