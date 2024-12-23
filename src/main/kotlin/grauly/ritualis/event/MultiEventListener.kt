@@ -18,21 +18,31 @@ import net.minecraft.world.event.listener.GameEventListener
 
 class MultiEventListener(
     private val positionSource: PositionSource,
+    private val subEventListeners: List<TypedEventListener>,
     private val shouldTrackCooldown: Boolean = false
 ) : GameEventListener {
-    constructor(entity: Entity, feetPosOffset: Float = 0f, shouldTrackCooldown: Boolean = false) : this(
+    constructor(
+        entity: Entity,
+        feetPosOffset: Float = 0f,
+        subEventListeners: List<TypedEventListener>,
+        shouldTrackCooldown: Boolean = false
+    ) : this(
         EntityPositionSource(entity, feetPosOffset),
+        subEventListeners,
         shouldTrackCooldown
     )
 
-    constructor(blockPos: BlockPos, shouldTrackCooldown: Boolean = false) : this(
+    constructor(
+        blockPos: BlockPos,
+        subEventListeners: List<TypedEventListener>,
+        shouldTrackCooldown: Boolean = false
+    ) : this(
         BlockPositionSource(blockPos),
+        subEventListeners,
         shouldTrackCooldown
     )
 
     private var cooldown: Int = 0
-
-    private val subEventListeners: MutableList<TypedEventListener> = mutableListOf()
 
     override fun getPositionSource(): PositionSource = positionSource
 

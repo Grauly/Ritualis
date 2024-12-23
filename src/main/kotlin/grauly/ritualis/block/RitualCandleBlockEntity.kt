@@ -3,6 +3,9 @@ package grauly.ritualis.block
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.ModEvents
 import grauly.ritualis.Ritualis
+import grauly.ritualis.event.MultiEventListener
+import grauly.ritualis.event.impl.CandleExtinguishListener
+import grauly.ritualis.event.impl.CandleIgniteListener
 import grauly.ritualis.particle.ExtinguishParticleEffect
 import grauly.ritualis.particle.IgnitionParticleEffect
 import net.minecraft.block.BlockState
@@ -25,11 +28,14 @@ class RitualCandleBlockEntity(
     pos: BlockPos,
     state: BlockState
 ) : BlockEntity(ModBlockEntities.RITUAL_CANDLE_ENTITY, pos, state),
-    GameEventListener.Holder<CandleEventListener> {
-    private val listener = CandleEventListener(pos, this)
+    GameEventListener.Holder<MultiEventListener> {
+    private val listener = MultiEventListener(pos, shouldTrackCooldown = true, subEventListeners = listOf(
+        CandleExtinguishListener(pos, this),
+        CandleIgniteListener(pos, this)
+    ))
     private var dataHandler = CandleEventDataHandler()
 
-    override fun getEventListener(): CandleEventListener = listener
+    override fun getEventListener(): MultiEventListener = listener
 
     fun tick() {
         dataHandler.tick(::processEvent)
