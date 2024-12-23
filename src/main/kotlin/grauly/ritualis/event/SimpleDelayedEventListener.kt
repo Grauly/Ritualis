@@ -31,8 +31,11 @@ abstract class SimpleDelayedEventListener : TypedEventListener {
 
         cooldown += getCooldownTime()
         eventQueue.add(PositionEventReference(emitterPosition, delay))
+        onEventQueued(world, emitterPosition, delay)
         return true
     }
+
+    protected abstract fun onEventQueued(world: ServerWorld, emitterPosition: Vec3d, delay: Int)
 
     protected abstract fun onEventReceived(originalSource: Vec3d)
 
