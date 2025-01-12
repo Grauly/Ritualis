@@ -64,11 +64,17 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         val q2 = quaternionAroundAxisAngle(Vec3d(.0,1.0,.0),90f)
         quat.mul(q2)
 */
+        val front = Vector3f(1f, 0f, 0f)
+        val up = Vector3f(0f,1f,0f)
+        val forward = context.lookAtVector.toVector3f()
+        val quat = Quaternionf().lookAlong(forward,up).invert().mul(Quaternionf().rotateY((PI/2).toFloat()))
+
+
         val spherical = context.lookAtVector.toSpherical()
         val q1 = quaternionAroundAxisAngle(Vec3d(.0,1.0,.0), -Math.toDegrees(spherical.z).toFloat())
         val q2 = quaternionAroundAxisAngle(Vec3d(.0,.0,1.0), -Math.toDegrees(spherical.y).toFloat())
         val q3 = quaternionAroundAxisAngle(Vec3d(.0,.0,1.0), 90f)
-        val quat = q1.mul(q2).mul(q3)
+        //val quat = q1.mul(q2).mul(q3)
 
         visualizeQuaternion(matrices, vertexConsumers, quat, 0xFFFFFFFF.toInt())
         matrices.translate(.5, .5, .5)
