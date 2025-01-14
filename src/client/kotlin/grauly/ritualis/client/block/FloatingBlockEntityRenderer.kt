@@ -1,28 +1,18 @@
 package grauly.ritualis.client.block
 
-import com.mojang.blaze3d.systems.RenderSystem
-import grauly.ritualis.Ritualis
 import grauly.ritualis.block.FloatingBookBlockEntity
 import grauly.ritualis.extensions.toSpherical
-import net.minecraft.block.DirtPathBlock
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.data.Models
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderLayers
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexRendering
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory
 import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRenderer
-import net.minecraft.client.render.debug.DebugRenderer
 import net.minecraft.client.render.entity.model.BookModel
 import net.minecraft.client.render.entity.model.EntityModelLayers
-import net.minecraft.client.render.item.ItemRenderState
-import net.minecraft.client.render.item.ItemRenderer
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.item.ModelTransformationMode
-import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.math.Vec3d
 import org.joml.Quaternionf
 import org.joml.Vector3f
@@ -48,39 +38,11 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             RenderLayer::getEntitySolid
         )
         val context = entity.renderingContext
-        val time = context.ticks + tickDelta
-        val axis = context.extractAxisFromQuaternion(context.currentRotation)
+        val bookRotationOffset = quaternionAroundAxisAngle(Vec3d(.0,.0,1.0), 90f)
         matrices.push()
-        debugSpace(matrices, vertexConsumers)
 
-/*
-        val up = Vec3d(.0,1.0,.0)
-        val dot = up.dotProduct(context.lookAtVector)
-        val cross = up.crossProduct(context.lookAtVector)
-        val w = context.lookAtVector.length() + dot
-        val quat = Quaternionf(cross.x, cross.y, cross.z, w).normalize()
-*/
-/*
-        val q2 = quaternionAroundAxisAngle(Vec3d(.0,1.0,.0),90f)
-        quat.mul(q2)
-*/
-        val front = Vector3f(1f, 0f, 0f)
-        val up = Vector3f(0f,1f,0f)
-        val forward = context.lookAtVector.toVector3f()
-        val quat = Quaternionf().lookAlong(forward,up).invert().mul(Quaternionf().rotateY((PI/2).toFloat()))
-
-
-        val spherical = context.lookAtVector.toSpherical()
-        val q1 = quaternionAroundAxisAngle(Vec3d(.0,1.0,.0), -Math.toDegrees(spherical.z).toFloat())
-        val q2 = quaternionAroundAxisAngle(Vec3d(.0,.0,1.0), -Math.toDegrees(spherical.y).toFloat())
-        val q3 = quaternionAroundAxisAngle(Vec3d(.0,.0,1.0), 90f)
-        //val quat = q1.mul(q2).mul(q3)
-
-        visualizeQuaternion(matrices, vertexConsumers, quat, 0xFFFFFFFF.toInt())
-        matrices.translate(.5, .5, .5)
-        //matrices.translate(.5,sin(time*.1)*.2 + .5f,.5)
-        matrices.multiply(quat)
-        debugSpace(matrices,vertexConsumers)
+        matrices.translate(context.lastTargetPosition.lerp(context.targetPosition, tickDelta.toDouble()))
+        matrices.multiply(context.lastTargetRotation.nlerp(context.targetRotation, tickDelta))
 
         //pageTurnAmount: ???
         //leftFlipAmount: left page flip amount from 0 -> 1
