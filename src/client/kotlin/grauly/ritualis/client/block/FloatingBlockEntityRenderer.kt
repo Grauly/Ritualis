@@ -89,14 +89,13 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         return (-(cos(Math.PI * x) - 1) / 2).toFloat();
     }
 
-
-    fun lookDirectionToQuaternion(lookDirection: Vec3d): Quaternionf =
+    private fun lookDirectionToQuaternion(lookDirection: Vec3d): Quaternionf =
         Quaternionf().lookAlong(lookDirection.normalize().toVector3f(), Direction.UP.doubleVector.toVector3f())
             .invert()
             .mul(BOOK_ROTATION_OFFSET)
 
 
-    fun visualizeQuaternion(
+    private fun visualizeQuaternion(
         matrices: MatrixStack,
         vertexConsumers: VertexConsumerProvider,
         quaternion: Quaternionf,
@@ -122,7 +121,7 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         )
     }
 
-    fun putDebugText(
+    private fun putDebugText(
         text: String,
         offset: Vec3d,
         matrices: MatrixStack,
@@ -148,7 +147,7 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         matrices.pop()
     }
 
-    fun debugSpace(matrices: MatrixStack, vertexConsumers: VertexConsumerProvider) {
+    private fun debugSpace(matrices: MatrixStack, vertexConsumers: VertexConsumerProvider) {
         VertexRendering.drawVector(
             matrices,
             vertexConsumers.getBuffer(RenderLayer.LINES),
@@ -171,19 +170,4 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             0xFF0000FF.toInt()
         )
     }
-
-    fun quaternionAroundAxisAngle(axis: Vec3d, angle: Float): Quaternionf {
-        var radiansAngle = Math.toRadians(angle.toDouble()) / 2
-        /*
-                while(radiansAngle > 2* PI) radiansAngle -= PI
-                while(radiansAngle < 0) radiansAngle += PI
-        */
-        val scaledAxis = axis.normalize().multiply(sin(radiansAngle)).toVector3f()
-        return Quaternionf(scaledAxis.x, scaledAxis.y, scaledAxis.z, cos(radiansAngle).toFloat())
-    }
-
-    /*
-        fun calculateRotationQuaternion(oldFacing: Vec3d, newFacing: Vec3d, tickDelta: Float): Quaternionf {
-        }
-    */
 }
