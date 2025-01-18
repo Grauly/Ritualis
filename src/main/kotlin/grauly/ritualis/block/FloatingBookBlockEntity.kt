@@ -1,6 +1,7 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
+import grauly.ritualis.Ritualis
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.util.math.BlockPos
@@ -8,7 +9,8 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.random.Random
 import net.minecraft.world.World
 import org.joml.Quaternionf
-import kotlin.math.PI
+import org.joml.Vector3f
+import kotlin.math.max
 
 class FloatingBookBlockEntity(
     pos: BlockPos,
@@ -56,6 +58,8 @@ class FloatingBookBlockEntity(
         }
     )
 
+    private var lastPlayerLookAtTarget: Vec3d = Vec3d(1.0,.0,.0)
+
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
         renderingTick(world, pos, state)
@@ -63,11 +67,16 @@ class FloatingBookBlockEntity(
 
     private fun renderingTick(world: World, pos: BlockPos, state: BlockState) {
         renderingContext.ticks++
-        val searchStartPos = pos.toCenterPos()
-        val lookAtTarget = world.getClosestPlayer(searchStartPos.x, searchStartPos.y, searchStartPos.z, 5.0, false)
-
         positionVariance.runUpdate(world.getRandom())
         lookTargetVariance.runUpdate(world.getRandom())
+
+        val searchStartPos = pos.toCenterPos()
+        val lookAtTarget = world.getClosestPlayer(searchStartPos.x, searchStartPos.y, searchStartPos.z, 5.0, false)
+        if (lookAtTarget != null && lookAtTarget.eyePos != lastPlayerLookAtTarget) {
+            val localPos = lookAtTarget.eyePos.subtract(pos.toCenterPos())
+            lookTargetVariance.pushValue(localPos)
+            lastPlayerLookAtTarget = lookAtTarget.eyePos
+        }
 
     }
 
@@ -91,15 +100,27 @@ class FloatingBookBlockEntity(
             ticksPassed++
             if (!(ticksUntilNextChange - ticksPassed <= 0)) return
 
+            updateValue(valueUpdate.invoke(random, value), random)
+        }
+
+        fun updateValue(newValue: T, random: Random) {
             ticksPassed = 0
             ticksUntilIdle =
                 changeIntervalBase + (callRandom(changeIntervalVariance, random) * 2 - changeIntervalVariance)
             ticksUntilNextChange =
-                ticksUntilIdle + idleIntervalBase + (callRandom(idleIntervalVariance, random) * 2 - idleIntervalVariance)
+                ticksUntilIdle + idleIntervalBase + (callRandom(
+                    idleIntervalVariance,
+                    random
+                ) * 2 - idleIntervalVariance)
 
             previousValue = value
-            value = valueUpdate.invoke(random, value)
+            value = newValue
             updateCallback.invoke(value, previousValue, ticksUntilIdle)
+        }
+
+        fun pushValue(newValue: T) {
+            value = newValue
+            updateCallback.invoke(value, previousValue, max(ticksUntilIdle, 1))
         }
 
         private fun callRandom(value: Int, random: Random): Int {
