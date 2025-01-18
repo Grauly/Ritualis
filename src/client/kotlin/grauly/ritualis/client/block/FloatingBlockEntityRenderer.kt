@@ -17,10 +17,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import kotlin.math.PI
-import kotlin.math.acos
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
     BlockEntityRenderer<FloatingBookBlockEntity> {
@@ -54,7 +51,7 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             1f
         )
 
-        val position = context.previousTargetPosition.lerp(context.targetPosition, positionDelta.toDouble())
+        val position = context.previousTargetPosition.lerp(context.targetPosition, easeInOutCubic(positionDelta).toDouble())
         val offset = position.subtract(.5,.5,.5)
 
         val actualPreviousLookAt = context.previousLookTarget.subtract(offset)
@@ -83,6 +80,12 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
     companion object {
         private val BOOK_ROTATION_OFFSET = Quaternionf().rotationY((PI / 2).toFloat())
     }
+
+    fun easeInOutCubic(x: Float): Float {
+        return if(x < 0.5f) {4f * x * x * x} else {1 - (-2 * x + 2).pow(3) / 2f};
+    }
+
+
 
     fun lookDirectionToQuaternion(lookDirection: Vec3d): Quaternionf =
         Quaternionf().lookAlong(lookDirection.normalize().toVector3f(), Direction.UP.doubleVector.toVector3f())
