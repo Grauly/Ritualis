@@ -60,7 +60,7 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         val lookAt = lookDirectionToQuaternion(actualPreviousLookAt)
             .nlerp(
                 lookDirectionToQuaternion(actualLookAt),
-                lookAtDelta
+                easeInOutCubic(lookAtDelta)
             )
 
 
