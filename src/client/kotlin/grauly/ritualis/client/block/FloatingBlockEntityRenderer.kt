@@ -51,7 +51,7 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             1f
         )
 
-        val position = context.previousTargetPosition.lerp(context.targetPosition, easeInOutCubic(positionDelta).toDouble())
+        val position = context.previousTargetPosition.lerp(context.targetPosition, easeInOutSine(positionDelta).toDouble())
         val offset = position.subtract(.5,.5,.5)
 
         val actualPreviousLookAt = context.previousLookTarget.subtract(offset)
@@ -81,10 +81,13 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         private val BOOK_ROTATION_OFFSET = Quaternionf().rotationY((PI / 2).toFloat())
     }
 
-    fun easeInOutCubic(x: Float): Float {
+    private fun easeInOutCubic(x: Float): Float {
         return if(x < 0.5f) {4f * x * x * x} else {1 - (-2 * x + 2).pow(3) / 2f};
     }
 
+    private fun easeInOutSine(x: Float): Float {
+        return (-(cos(Math.PI * x) - 1) / 2).toFloat();
+    }
 
 
     fun lookDirectionToQuaternion(lookDirection: Vec3d): Quaternionf =
