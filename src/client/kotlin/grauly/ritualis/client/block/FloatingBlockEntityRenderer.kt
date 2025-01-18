@@ -1,7 +1,7 @@
 package grauly.ritualis.client.block
 
+import grauly.ritualis.Ritualis
 import grauly.ritualis.block.FloatingBookBlockEntity
-import grauly.ritualis.extensions.toSpherical
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.RenderLayer
@@ -13,10 +13,14 @@ import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRender
 import net.minecraft.client.render.entity.model.BookModel
 import net.minecraft.client.render.entity.model.EntityModelLayers
 import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.acos
+import kotlin.math.cos
+import kotlin.math.sin
 
 class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
     BlockEntityRenderer<FloatingBookBlockEntity> {
@@ -38,11 +42,34 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             RenderLayer::getEntitySolid
         )
         val context = entity.renderingContext
-        val bookRotationOffset = quaternionAroundAxisAngle(Vec3d(.0,.0,1.0), 90f)
-        matrices.push()
+        val time = context.ticks + tickDelta
+        val positionDelta: Float = Math.clamp(
+            (time - context.positionStartTimestamp) / (context.positionEndTimestamp - context.positionStartTimestamp),
+            0f,
+            1f
+        )
+        val lookAtDelta: Float = Math.clamp(
+            (time - context.lookStartTimestamp) / (context.lookEndTimestamp - context.lookStartTimestamp),
+            0f,
+            1f
+        )
 
-        matrices.translate(context.lastTargetPosition.lerp(context.targetPosition, tickDelta.toDouble()))
-        matrices.multiply(context.lastTargetRotation.nlerp(context.targetRotation, tickDelta))
+        val position = context.previousTargetPosition.lerp(context.targetPosition, positionDelta.toDouble())
+        val offset = position.subtract(.5,.5,.5)
+
+        val actualPreviousLookAt = context.previousLookTarget.subtract(offset)
+        val actualLookAt = context.lookTarget.subtract(offset)
+
+        val lookAt = lookDirectionToQuaternion(actualPreviousLookAt)
+            .nlerp(
+                lookDirectionToQuaternion(actualLookAt),
+                lookAtDelta
+            )
+
+
+        matrices.push()
+        matrices.translate(position)
+        matrices.multiply(lookAt)
 
         //pageTurnAmount: ???
         //leftFlipAmount: left page flip amount from 0 -> 1
@@ -52,6 +79,16 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         book.render(matrices, vertexConsumer, light, overlay)
         matrices.pop()
     }
+
+    companion object {
+        private val BOOK_ROTATION_OFFSET = Quaternionf().rotationY((PI / 2).toFloat())
+    }
+
+    fun lookDirectionToQuaternion(lookDirection: Vec3d): Quaternionf =
+        Quaternionf().lookAlong(lookDirection.normalize().toVector3f(), Direction.UP.doubleVector.toVector3f())
+            .invert()
+            .mul(BOOK_ROTATION_OFFSET)
+
 
     fun visualizeQuaternion(
         matrices: MatrixStack,
@@ -72,14 +109,20 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         val textPoint = Vec3d(.5, .5, .5).add(quaternionAxis.multiply(1.2))
 
         putDebugText(
-        "${Math.toDegrees(angle * 2)}",
+            "${Math.toDegrees(angle * 2)}",
             textPoint,
             matrices,
             vertexConsumers
         )
     }
 
-    fun putDebugText(text: String, offset: Vec3d, matrices: MatrixStack, vertexConsumers: VertexConsumerProvider, color: Int = 0xFFFFFFFF.toInt()) {
+    fun putDebugText(
+        text: String,
+        offset: Vec3d,
+        matrices: MatrixStack,
+        vertexConsumers: VertexConsumerProvider,
+        color: Int = 0xFFFFFFFF.toInt()
+    ) {
         matrices.push()
         matrices.translate(offset)
         matrices.multiply(MinecraftClient.getInstance().gameRenderer.camera.rotation)
