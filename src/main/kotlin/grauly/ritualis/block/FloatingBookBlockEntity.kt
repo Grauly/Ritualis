@@ -26,7 +26,7 @@ class FloatingBookBlockEntity(
         0,
         0,
         getWorld()?.getRandom()?.nextInt(20) ?: (20),
-        Vec3d(.5, .5, .5).add(.0, .2, .0),
+        Vec3d(.5, .5, .5).add(.0, .12, .0),
         valueUpdate = { random: Random, previous: Vec3d ->
             previous.subtract(.5, .5, .5).multiply(-1.0).add(.5, .5, .5)
         },
