@@ -54,20 +54,11 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         val position = context.previousTargetPosition.lerp(context.targetPosition, easeInOutSine(positionDelta).toDouble())
         val offset = position.subtract(.5,.5,.5)
 
-        val actualPreviousLookAt = context.previousLookTarget.subtract(offset)
-        val actualLookAt = context.lookTarget.subtract(offset)
-
-        val lookAt = lookDirectionToQuaternion(actualPreviousLookAt)
-            .nlerp(
-                lookDirectionToQuaternion(actualLookAt),
-                easeInOutCubic(lookAtDelta)
-            )
-
+        entity.bookRotationHandler.handleOffset(offset)
         entity.bookRotationHandler.partialTick(tickDelta)
 
         matrices.push()
-        matrices.translate(.5,.5,.5)
-        //matrices.translate(position)
+        matrices.translate(position)
         matrices.multiply(entity.bookRotationHandler.currentRotation)
 
         //pageTurnAmount: ???
