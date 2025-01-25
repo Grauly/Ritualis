@@ -63,10 +63,12 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
                 easeInOutCubic(lookAtDelta)
             )
 
+        entity.bookRotationHandler.partialTick(tickDelta)
 
         matrices.push()
-        matrices.translate(position)
-        matrices.multiply(lookAt)
+        matrices.translate(.5,.5,.5)
+        //matrices.translate(position)
+        matrices.multiply(entity.bookRotationHandler.currentRotation)
 
         //pageTurnAmount: ???
         //leftFlipAmount: left page flip amount from 0 -> 1
