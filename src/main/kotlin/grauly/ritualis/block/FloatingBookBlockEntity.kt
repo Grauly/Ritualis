@@ -2,6 +2,7 @@ package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
 import grauly.ritualis.Ritualis
+import grauly.ritualis.util.RotationHandler
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.util.math.BlockPos
@@ -23,7 +24,7 @@ class FloatingBookBlockEntity(
 ) {
     //only needed client side
     var renderingContext: RenderingContext = RenderingContext(0)
-    val bookRotationHandler: BookRotationHandler = BookRotationHandler()
+    val bookRotationHandler: RotationHandler = RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat()))
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
         20,
         0,
@@ -53,10 +54,7 @@ class FloatingBookBlockEntity(
             Vec3d(.0, .0, .0).addRandom(random, 10f)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
-            renderingContext.previousLookTarget = oldValue
-            renderingContext.lookTarget = newValue
-            renderingContext.lookStartTimestamp = renderingContext.ticks
-            renderingContext.lookEndTimestamp = renderingContext.ticks + timeUntilChangeEnds
+
         }
     )
 
@@ -81,61 +79,6 @@ class FloatingBookBlockEntity(
             bookRotationHandler.lookAt(localPos)
         }
 
-    }
-
-    class BookRotationHandler(
-        private val maxAngleSpeedPerTick: Float = 0.1f,
-        private val epsilon: Float = 0.01f
-    ) {
-        var currentRotation: Quaternionf = Quaternionf() //a
-        private var targetRotation: Quaternionf = Quaternionf() //c
-        private val BOOK_ROTATION_OFFSET = Quaternionf().rotationY((PI / 2).toFloat())
-        private var movingTicks: Float = 0f
-        private var currentLookAtTarget: Vec3d = Vec3d(.0,.0,.0)
-
-        fun partialTick(deltaTime: Float) {
-            //a^-1 * a * X = a^-1 * c
-            val rotationQuaternion = Quaternionf(currentRotation).invert().mul(targetRotation)
-            val fullMovementAngle = rotationQuaternion.angle()
-            val axis =
-                Vector3f(rotationQuaternion.x, rotationQuaternion.y, rotationQuaternion.z).div(sin(fullMovementAngle))
-            val maxMovementAngle = maxAngleSpeedPerTick * deltaTime
-
-            if (fullMovementAngle < epsilon || fullMovementAngle > PI * 2 - epsilon) {
-                movingTicks = 0f
-                return
-            }
-
-            //giving up on smoothed movement for now
-            val movementAngle: Float = if(fullMovementAngle > PI) {
-                (2 * PI - min((2 * PI) - fullMovementAngle, maxMovementAngle.toDouble())).toFloat()
-            } else {
-                min(fullMovementAngle, maxMovementAngle)
-            }
-
-
-            movingTicks += deltaTime
-            val change = Quaternionf().rotationAxis(movementAngle, axis)
-            currentRotation.mul(change)
-        }
-
-        fun lookAt(lookTarget: Vec3d) {
-            currentLookAtTarget = lookTarget
-            adjustRotationTo(lookTarget)
-        }
-
-        fun handleOffset(offset: Vec3d) {
-            val newTarget = currentLookAtTarget.subtract(offset)
-            adjustRotationTo(newTarget)
-        }
-
-        private fun adjustRotationTo(lookTarget: Vec3d) {
-            targetRotation = Quaternionf()
-                .lookAlong(lookTarget.normalize().toVector3f(), Direction.UP.doubleVector.toVector3f())
-                .invert()
-                .mul(BOOK_ROTATION_OFFSET)
-
-        }
     }
 
     data class ChangeVariance<T>(

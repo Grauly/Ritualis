@@ -59,7 +59,7 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
 
         matrices.push()
         matrices.translate(position)
-        matrices.multiply(entity.bookRotationHandler.currentRotation)
+        matrices.multiply(entity.bookRotationHandler.getRotation())
 
         //pageTurnAmount: ???
         //leftFlipAmount: left page flip amount from 0 -> 1
