@@ -45,11 +45,6 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             0f,
             1f
         )
-        val lookAtDelta: Float = Math.clamp(
-            (time - context.lookStartTimestamp) / (context.lookEndTimestamp - context.lookStartTimestamp),
-            0f,
-            1f
-        )
 
         val position = context.previousTargetPosition.lerp(context.targetPosition, easeInOutSine(positionDelta).toDouble())
         val offset = position.subtract(.5,.5,.5)

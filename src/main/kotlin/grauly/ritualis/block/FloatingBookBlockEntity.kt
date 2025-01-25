@@ -21,7 +21,7 @@ class FloatingBookBlockEntity(
     state
 ) {
     //only needed client side
-    var renderingContext: RenderingContext = RenderingContext(0)
+    var renderingContext: RenderingContext = RenderingContext(RANDOM.nextInt(1000))
     val bookRotationHandler: RotationHandler =
         RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat()))
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
@@ -29,8 +29,9 @@ class FloatingBookBlockEntity(
         0,
         0,
         0,
-        getWorld()?.getRandom()?.nextInt(20) ?: (20),
-        Vec3d(.5, .5, .5).add(.0, .12, .0),
+        RANDOM.nextInt(20),
+        ticksUntilNextChange = 20,
+        value = Vec3d(.5, .5, .5).add(.0, .12, .0),
         valueUpdate = { random: Random, previous: Vec3d ->
             previous.subtract(.5, .5, .5).multiply(-1.0).add(.5, .5, .5)
         },
@@ -53,14 +54,17 @@ class FloatingBookBlockEntity(
             Vec3d(.0, .0, .0).addRandom(random, 10f)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
-
+            if (isWatchingPlayer) return@ChangeVariance
+            bookRotationHandler.lookAt(newValue)
         }
     )
 
     private var lastPlayerLookAtTarget: Vec3d = Vec3d(1.0, .0, .0)
+    private var isWatchingPlayer: Boolean = false
 
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
+        if(!world.isClient()) return
         renderingTick(world, pos, state)
     }
 
@@ -71,11 +75,16 @@ class FloatingBookBlockEntity(
 
         val searchStartPos = pos.toCenterPos()
         val lookAtTarget = world.getClosestPlayer(searchStartPos.x, searchStartPos.y, searchStartPos.z, 5.0, false)
-        if (lookAtTarget != null && lookAtTarget.eyePos != lastPlayerLookAtTarget) {
-            val localPos = lookAtTarget.eyePos.subtract(pos.toCenterPos())
-            lookTargetVariance.pushValue(localPos)
-            lastPlayerLookAtTarget = lookAtTarget.eyePos
-            bookRotationHandler.lookAt(localPos)
+        if (lookAtTarget != null) {
+            if (lookAtTarget.eyePos != lastPlayerLookAtTarget) {
+                isWatchingPlayer = true
+                val localPos = lookAtTarget.eyePos.subtract(pos.toCenterPos())
+                lookTargetVariance.pushValue(localPos)
+                lastPlayerLookAtTarget = lookAtTarget.eyePos
+                bookRotationHandler.lookAt(localPos)
+            }
+        } else {
+            isWatchingPlayer = false
         }
 
     }
@@ -83,9 +92,13 @@ class FloatingBookBlockEntity(
 
     data class RenderingContext(
         var ticks: Int,
-        var targetPosition: Vec3d = Vec3d(1.0, .0, .0),
-        var previousTargetPosition: Vec3d = Vec3d(1.0, .0, .0),
+        var targetPosition: Vec3d = Vec3d(.5, .62, .5),
+        var previousTargetPosition: Vec3d = Vec3d(.5, .62, .5),
         var positionStartTimestamp: Int = ticks,
         var positionEndTimestamp: Int = ticks,
     )
+
+    companion object {
+        val RANDOM: kotlin.random.Random = kotlin.random.Random(0)
+    }
 }
