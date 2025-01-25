@@ -1,18 +1,16 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
-import grauly.ritualis.Ritualis
+import grauly.ritualis.util.ChangeVariance
 import grauly.ritualis.util.RotationHandler
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.random.Random
 import net.minecraft.world.World
 import org.joml.Quaternionf
-import org.joml.Vector3f
-import kotlin.math.*
+import kotlin.math.PI
 
 class FloatingBookBlockEntity(
     pos: BlockPos,
@@ -24,7 +22,8 @@ class FloatingBookBlockEntity(
 ) {
     //only needed client side
     var renderingContext: RenderingContext = RenderingContext(0)
-    val bookRotationHandler: RotationHandler = RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat()))
+    val bookRotationHandler: RotationHandler =
+        RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat()))
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
         20,
         0,
@@ -81,54 +80,6 @@ class FloatingBookBlockEntity(
 
     }
 
-    data class ChangeVariance<T>(
-        val changeIntervalBase: Int,
-        val changeIntervalVariance: Int,
-        val idleIntervalBase: Int,
-        val idleIntervalVariance: Int,
-
-        var ticksPassed: Int,
-        var value: T,
-
-        var ticksUntilNextChange: Int = 0,
-        var ticksUntilIdle: Int = 0,
-
-        var previousValue: T = value,
-        val valueUpdate: (Random, T) -> T,
-        val updateCallback: (T, T, Int) -> Unit = { new: T, old: T, delta: Int -> }
-    ) {
-        fun runUpdate(random: Random) {
-            ticksPassed++
-            if (!(ticksUntilNextChange - ticksPassed <= 0)) return
-
-            updateValue(valueUpdate.invoke(random, value), random)
-        }
-
-        fun updateValue(newValue: T, random: Random) {
-            ticksPassed = 0
-            ticksUntilIdle =
-                changeIntervalBase + (callRandom(changeIntervalVariance, random) * 2 - changeIntervalVariance)
-            ticksUntilNextChange =
-                ticksUntilIdle + idleIntervalBase + (callRandom(
-                    idleIntervalVariance,
-                    random
-                ) * 2 - idleIntervalVariance)
-
-            previousValue = value
-            value = newValue
-            updateCallback.invoke(value, previousValue, ticksUntilIdle)
-        }
-
-        fun pushValue(newValue: T) {
-            value = newValue
-            updateCallback.invoke(value, previousValue, max(ticksUntilIdle, 1))
-        }
-
-        private fun callRandom(value: Int, random: Random): Int {
-            if (value <= 0) return 0
-            return random.nextInt(value)
-        }
-    }
 
     data class RenderingContext(
         var ticks: Int,
@@ -136,9 +87,5 @@ class FloatingBookBlockEntity(
         var previousTargetPosition: Vec3d = Vec3d(1.0, .0, .0),
         var positionStartTimestamp: Int = ticks,
         var positionEndTimestamp: Int = ticks,
-        var lookTarget: Vec3d = Vec3d(1.0, .0, .0),
-        var previousLookTarget: Vec3d = Vec3d(1.0, .0, .0),
-        var lookStartTimestamp: Int = ticks,
-        var lookEndTimestamp: Int = ticks
     )
 }
