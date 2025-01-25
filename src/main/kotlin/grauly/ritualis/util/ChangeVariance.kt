@@ -21,7 +21,7 @@ data class ChangeVariance<T>(
 ) {
     fun runUpdate(random: Random) {
         ticksPassed++
-        if (!(ticksUntilNextChange - ticksPassed <= 0)) return
+        if (ticksUntilNextChange - ticksPassed > 0) return
 
         updateValue(valueUpdate.invoke(random, value), random)
     }
