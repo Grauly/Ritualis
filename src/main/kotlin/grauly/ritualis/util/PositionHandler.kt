@@ -8,10 +8,10 @@ class PositionHandler(
     private val maxMovementPerTick: Double = 0.1,
     private val epsilon: Double = 0.001,
     private val easing: EasingHandler = EasingHandler.IdentityEasingHandler(),
+    private var startPosition: Vec3d = Vec3d(.0, .0, .0)
 ) {
     private var currentPosition: Vec3d = Vec3d(.0, .0, .0)
     private var targetPosition: Vec3d = Vec3d(.0, .0, .0)
-    private var startPosition: Vec3d = Vec3d(.0, .0, .0)
     private var delta: Double = 0.0
 
     fun partialTick(deltaTime: Double) {
