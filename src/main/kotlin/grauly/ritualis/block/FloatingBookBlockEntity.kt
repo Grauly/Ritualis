@@ -1,7 +1,9 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
+import grauly.ritualis.easing.SimpleSinEasing
 import grauly.ritualis.util.ChangeVariance
+import grauly.ritualis.util.PositionHandler
 import grauly.ritualis.util.RotationHandler
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
@@ -24,6 +26,8 @@ class FloatingBookBlockEntity(
     var renderingContext: RenderingContext = RenderingContext(RANDOM.nextInt(1000))
     val bookRotationHandler: RotationHandler =
         RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat()))
+    val bookPositionHandler: PositionHandler =
+        PositionHandler(easing = SimpleSinEasing(), startPosition = Vec3d(.5, .62, .5),)
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
         20,
         0,
@@ -36,6 +40,7 @@ class FloatingBookBlockEntity(
             previous.subtract(.5, .5, .5).multiply(-1.0).add(.5, .5, .5)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
+            bookPositionHandler.moveTo(newValue)
             renderingContext.previousTargetPosition = oldValue
             renderingContext.targetPosition = newValue
             renderingContext.positionStartTimestamp = renderingContext.ticks
@@ -65,11 +70,25 @@ class FloatingBookBlockEntity(
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
         if(!world.isClient()) return
-        renderingTick(world, pos, state)
+        renderingContext.ticks++
+        activeRenderingTick(world, pos, state)
+/*
+        if(state.get(FloatingBook.ACTIVE)) {
+            activeRenderingTick(world, pos, state)
+        } else {
+            passiveRenderingTick(world, pos, state)
+        }
+*/
     }
 
-    private fun renderingTick(world: World, pos: BlockPos, state: BlockState) {
-        renderingContext.ticks++
+    private fun passiveRenderingTick(world: World, pos: BlockPos, state: BlockState) {
+        renderingContext.previousTargetPosition = renderingContext.targetPosition
+        renderingContext.targetPosition = Vec3d(.5,.1,.5)
+        renderingContext.positionStartTimestamp = renderingContext.ticks
+        renderingContext.positionEndTimestamp = renderingContext.ticks + 50
+    }
+
+    private fun activeRenderingTick(world: World, pos: BlockPos, state: BlockState) {
         positionVariance.runUpdate(world.getRandom())
         lookTargetVariance.runUpdate(world.getRandom())
 

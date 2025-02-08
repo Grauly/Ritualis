@@ -1,5 +1,6 @@
 package grauly.ritualis.util
 
+import grauly.ritualis.Ritualis
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import org.joml.Quaternionf
@@ -17,6 +18,8 @@ class RotationHandler(
     private var targetRotation: Quaternionf = Quaternionf() //c
     private var currentLookAtTarget: Vec3d = Vec3d(.0, .0, .0)
 
+    //TODO: fix broken rotation on target reach (FUCKING AGAIN)
+
     fun partialTick(deltaTime: Float) {
         //a^-1 * a * X = a^-1 * c
         val rotationQuaternion = Quaternionf(currentRotation).invert().mul(targetRotation)
@@ -25,9 +28,12 @@ class RotationHandler(
             Vector3f(rotationQuaternion.x, rotationQuaternion.y, rotationQuaternion.z).div(sin(fullMovementAngle))
         val maxMovementAngle = maxAngleSpeedPerTick * deltaTime
 
-        if (fullMovementAngle < epsilon || fullMovementAngle > PI * 2 - epsilon) {
+        Ritualis.LOGGER.info("fullMovementAngle: {}, current: {} {}", fullMovementAngle, currentRotation, currentRotation.lengthSquared())
+        if (fullMovementAngle < epsilon || fullMovementAngle > PI * 2 - epsilon || !fullMovementAngle.isFinite()) {
+            Ritualis.LOGGER.info("returning")
             return
         }
+        Ritualis.LOGGER.info("not returning")
 
         //giving up on smoothed movement for now
         val movementAngle: Float = if (fullMovementAngle > PI) {
@@ -37,6 +43,7 @@ class RotationHandler(
         }
 
         val change = Quaternionf().rotationAxis(movementAngle, axis)
+        Ritualis.LOGGER.info("change: {} {}", change, change.lengthSquared())
         currentRotation.mul(change)
     }
 
