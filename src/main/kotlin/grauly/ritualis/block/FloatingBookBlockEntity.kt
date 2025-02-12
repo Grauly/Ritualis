@@ -36,6 +36,7 @@ class FloatingBookBlockEntity(
             previous.subtract(.5, .5, .5).multiply(-1.0).add(.5, .5, .5)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
+            if (!active) return@ChangeVariance
             renderingContext.bookPositionHandler.moveTo(newValue)
         }
     )
@@ -51,19 +52,29 @@ class FloatingBookBlockEntity(
             Vec3d(.0, .0, .0).addRandom(random, 10f)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
-            if (isWatchingPlayer) return@ChangeVariance
+            if (isWatchingPlayer || !active) return@ChangeVariance
             renderingContext.bookRotationHandler.lookAt(newValue)
         }
     )
-
     private var lastPlayerLookAtTarget: Vec3d = Vec3d(1.0, .0, .0)
     private var isWatchingPlayer: Boolean = false
+    private var active: Boolean = false
 
+    fun notifyStateChange(world: World, pos: BlockPos, state: BlockState) {
+        val isNowActive = state.get(FloatingBook.ACTIVE)
+        if (active == isNowActive) return
+        active = isNowActive
+        if (active) return
+        isWatchingPlayer = false
+        renderingContext.bookPositionHandler.moveTo(Vec3d(.5, .1, .5))
+        val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0).add(.0, .1, .0)
+        renderingContext.bookRotationHandler.lookAt(newLookVector)
+    }
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
-        if(!world.isClient()) return
+        if (!world.isClient()) return
         renderingContext.ticks++
-        if(state.get(FloatingBook.ACTIVE)) {
+        if (state.get(FloatingBook.ACTIVE)) {
             activeRenderingTick(world, pos, state)
         } else {
             passiveRenderingTick(world, pos, state)
@@ -101,7 +112,7 @@ class FloatingBookBlockEntity(
         val bookRotationHandler: RotationHandler =
             RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat())),
         val bookPositionHandler: PositionHandler =
-            PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5),)
+            PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5))
     )
 
     companion object {
