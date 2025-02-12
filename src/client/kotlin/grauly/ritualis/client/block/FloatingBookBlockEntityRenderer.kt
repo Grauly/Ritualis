@@ -48,7 +48,7 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
 
         matrices.push()
         matrices.translate(position)
-        matrices.multiply(context.bookRotationHandler.getRotation())
+        matrices.multiply(context.bookRotationHandler.getValue())
         if(!entity.active) {
             matrices.multiply(Quaternionf().rotationX((PI/2).toFloat()))
         }

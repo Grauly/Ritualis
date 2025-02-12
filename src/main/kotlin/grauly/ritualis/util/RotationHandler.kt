@@ -5,6 +5,7 @@ import net.minecraft.util.math.Vec3d
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.PI
+import kotlin.math.acos
 import kotlin.math.min
 import kotlin.math.sin
 
@@ -12,12 +13,12 @@ class RotationHandler(
     private val maxAngleSpeedPerTick: Float = 0.1f,
     private val epsilon: Float = 0.01f,
     var rotationOffset: Quaternionf = Quaternionf()
-) {
+): ValueHandler<Quaternionf> {
     private var currentRotation: Quaternionf = Quaternionf() //a
     private var targetRotation: Quaternionf = Quaternionf() //c
     private var currentLookAtTarget: Vec3d = Vec3d(.0, .0, .0)
 
-    fun partialTick(deltaTime: Float) {
+    override fun partialTick(deltaTime: Float) {
         //a^-1 * a * X = a^-1 * c
         val rotationQuaternion = Quaternionf(currentRotation).invert().mul(targetRotation)
         val fullMovementAngle = rotationQuaternion.angle()
@@ -40,9 +41,20 @@ class RotationHandler(
         currentRotation.mul(change)
     }
 
-    fun getRotation(): Quaternionf = currentRotation
+    override fun getValue(): Quaternionf = currentRotation
 
-    fun lookAt(lookTarget: Vec3d) {
+    override fun setValue(newValue: Quaternionf) {
+        currentLookAtTarget = lookAtFromQuaternion(newValue)
+        targetRotation = newValue
+        currentRotation = newValue
+    }
+
+    override fun updateGoal(newGoal: Quaternionf) {
+        currentLookAtTarget = lookAtFromQuaternion(newGoal)
+        targetRotation = newGoal
+    }
+
+    fun updateGoal(lookTarget: Vec3d) {
         currentLookAtTarget = lookTarget
         adjustRotationTo(lookTarget)
     }
@@ -50,6 +62,13 @@ class RotationHandler(
     fun handleOffset(offset: Vec3d) {
         val newTarget = currentLookAtTarget.subtract(offset)
         adjustRotationTo(newTarget)
+    }
+
+    private fun lookAtFromQuaternion(quaternion: Quaternionf): Vec3d {
+        val angle = acos(quaternion.w).toDouble()
+        val quaternionAxis =
+            Vec3d(quaternion.x.toDouble(), quaternion.y.toDouble(), quaternion.z.toDouble()).multiply(1 / sin(angle))
+        return quaternionAxis
     }
 
     private fun adjustRotationTo(lookTarget: Vec3d) {
