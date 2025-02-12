@@ -39,12 +39,16 @@ class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             RenderLayer::getEntitySolid
         )
 
-        entity.bookPositionHandler.partialTick(tickDelta.toDouble())
+        val time = entity.renderingContext.ticks + tickDelta
+        val actualDeltaTime = time - entity.renderingContext.lastTime
+        entity.renderingContext.lastTime = time
+
+        entity.bookPositionHandler.partialTick(actualDeltaTime.toDouble())
         val position = entity.bookPositionHandler.getCurrentPosition()
         val offset = position.subtract(.5,.5,.5)
 
         entity.bookRotationHandler.handleOffset(offset)
-        entity.bookRotationHandler.partialTick(tickDelta)
+        entity.bookRotationHandler.partialTick(actualDeltaTime)
 
         matrices.push()
         matrices.translate(position)
