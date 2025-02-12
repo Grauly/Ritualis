@@ -1,6 +1,5 @@
 package grauly.ritualis.client.block
 
-import grauly.ritualis.Ritualis
 import grauly.ritualis.block.FloatingBookBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
@@ -19,7 +18,7 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.*
 
-class FloatingBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
+class FloatingBookEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
     BlockEntityRenderer<FloatingBookBlockEntity> {
 
     private val book = BookModel(ctx.getLayerModelPart(EntityModelLayers.BOOK))
