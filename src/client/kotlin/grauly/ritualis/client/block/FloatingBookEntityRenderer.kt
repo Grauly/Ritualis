@@ -66,14 +66,6 @@ class FloatingBookEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         private val BOOK_ROTATION_OFFSET = Quaternionf().rotationY((PI / 2).toFloat())
     }
 
-    private fun easeInOutCubic(x: Float): Float {
-        return if(x < 0.5f) {4f * x * x * x} else {1 - (-2 * x + 2).pow(3) / 2f};
-    }
-
-    private fun easeInOutSine(x: Float): Float {
-        return (-(cos(Math.PI * x) - 1) / 2).toFloat();
-    }
-
     private fun lookDirectionToQuaternion(lookDirection: Vec3d): Quaternionf =
         Quaternionf().lookAlong(lookDirection.normalize().toVector3f(), Direction.UP.doubleVector.toVector3f())
             .invert()
