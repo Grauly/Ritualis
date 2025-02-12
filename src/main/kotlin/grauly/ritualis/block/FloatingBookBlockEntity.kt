@@ -41,10 +41,6 @@ class FloatingBookBlockEntity(
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
             bookPositionHandler.moveTo(newValue)
-            renderingContext.previousTargetPosition = oldValue
-            renderingContext.targetPosition = newValue
-            renderingContext.positionStartTimestamp = renderingContext.ticks
-            renderingContext.positionEndTimestamp = renderingContext.ticks + timeUntilChangeEnds
         }
     )
 
@@ -82,10 +78,7 @@ class FloatingBookBlockEntity(
     }
 
     private fun passiveRenderingTick(world: World, pos: BlockPos, state: BlockState) {
-        renderingContext.previousTargetPosition = renderingContext.targetPosition
-        renderingContext.targetPosition = Vec3d(.5,.1,.5)
-        renderingContext.positionStartTimestamp = renderingContext.ticks
-        renderingContext.positionEndTimestamp = renderingContext.ticks + 50
+
     }
 
     private fun activeRenderingTick(world: World, pos: BlockPos, state: BlockState) {
@@ -111,10 +104,7 @@ class FloatingBookBlockEntity(
 
     data class RenderingContext(
         var ticks: Int,
-        var targetPosition: Vec3d = Vec3d(.5, .62, .5),
-        var previousTargetPosition: Vec3d = Vec3d(.5, .62, .5),
-        var positionStartTimestamp: Int = ticks,
-        var positionEndTimestamp: Int = ticks,
+        var lastTime: Float = ticks.toFloat()
     )
 
     companion object {

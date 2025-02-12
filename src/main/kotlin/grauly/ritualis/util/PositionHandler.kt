@@ -7,21 +7,22 @@ import kotlin.math.min
 import kotlin.math.pow
 
 class PositionHandler(
-    private val maxMovementPerTick: Double = 0.01,
+    private val maxMovementPerTick: Double = 0.02,
     private val epsilon: Double = 0.001,
     private val easing: EasingHandler = EasingHandler.IdentityEasingHandler(),
     private var startPosition: Vec3d = Vec3d(.0, .0, .0)
 ) {
-    private var currentPosition: Vec3d = Vec3d(.0, .0, .0)
+    private var currentPosition: Vec3d = startPosition
     private var targetPosition: Vec3d = startPosition
     private var delta: Double = 0.0
 
-    fun partialTick(deltaTime: Double) {
+    fun partialTick(timePassedTicks: Double) {
         if (currentPosition.squaredDistanceTo(targetPosition) <= epsilon.pow(2.0)) return
         val fullMovementVector = targetPosition.subtract(startPosition)
         val fullLength = fullMovementVector.length()
-        if (fullLength == 0.0) return
-        val deltaOffset = 1 / (fullLength / maxMovementPerTick * deltaTime)
+        if (fullLength <= epsilon) return
+        val allowedMovement = min(fullLength, maxMovementPerTick * timePassedTicks)
+        val deltaOffset = 1 / (fullLength / allowedMovement)
         delta = min(1.0, delta + deltaOffset)
         currentPosition = startPosition.lerp(targetPosition, delta)
     }
