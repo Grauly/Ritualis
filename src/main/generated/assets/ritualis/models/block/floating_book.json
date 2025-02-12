@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ritualis:block/floating_book_down",
+    "east": "ritualis:block/floating_book_east",
+    "north": "ritualis:block/floating_book_north",
+    "particle": "ritualis:block/floating_book_particle",
+    "south": "ritualis:block/floating_book_south",
+    "up": "ritualis:block/floating_book_up",
+    "west": "ritualis:block/floating_book_west"
+  }
+}

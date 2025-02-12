@@ -1,4 +1,4 @@
-// 1.21.4	2024-12-23T00:52:47.080988584	Ritualis/Model Definitions
+// 1.21.4	2025-02-12T20:26:57.124178973	Ritualis/Model Definitions
 e78048d20fa2a395574defc2dfe064e921e519de assets/ritualis/blockstates/light_blue_candle.json
 adc2c9547773b0173a75208b5852d572a5cf5887 assets/ritualis/items/light_blue_candle.json
 e6aa911480b301d11a0cf3d55c39ac3ca7ca1a68 assets/ritualis/items/magenta_candle.json
@@ -9,6 +9,7 @@ e6ea4ce4d8f46e0df3417ed9bbace4fcb24864ae assets/ritualis/blockstates/gray_candle
 523fdafd9fdc50156621f4a16ff0d37bc129bcd1 assets/ritualis/blockstates/green_candle.json
 35da8f2bc6c8ad0ba7c4c538f3961144af5ea319 assets/ritualis/blockstates/candle.json
 cd6c40aac04b774dce1e7e24386a9adae2fdb1bc assets/ritualis/items/gray_candle.json
+46cefaa91494f3d7e20d3d88899a32704400f794 assets/ritualis/items/floating_book.json
 c3eb2480e195b9c02f9116649d749152fd8cf93e assets/ritualis/items/purple_candle.json
 b1bbde617d0ffe716b9fa215544b05595f977d64 assets/ritualis/blockstates/red_candle.json
 e055053b9d6ad17cfad3efb4aa494c76972bfe4d assets/ritualis/items/lime_candle.json
@@ -17,6 +18,7 @@ e055053b9d6ad17cfad3efb4aa494c76972bfe4d assets/ritualis/items/lime_candle.json
 0f2389ec9e54b24eb23c20a661d735ceeda72c06 assets/ritualis/items/light_gray_candle.json
 330cbea30300d355d3e1ed6b52f0d281f130be6a assets/ritualis/blockstates/cyan_candle.json
 ae6463ec7be60199f7f49164dc8a5edd93159110 assets/ritualis/items/white_candle.json
+405457d49cdfd9978c1ce691f3b80672f640d15a assets/ritualis/models/block/floating_book.json
 c1633fd919630e89fded5b7bbb3e2fa5976879e5 assets/ritualis/items/orange_candle.json
 b9e49888b3ea13e8a3c0052e7808f24ebcc72c6e assets/ritualis/blockstates/black_candle.json
 4da6dcb30bfea41bb106874e6028109a982be1d0 assets/ritualis/items/yellow_candle.json
@@ -31,3 +33,4 @@ c7b28b96fd5cae996b68d81ca01f947f59a41ea0 assets/ritualis/items/cyan_candle.json
 f104002a5196a10b044136145788963b25aed72a assets/ritualis/blockstates/pink_candle.json
 85e69d77970ce004676ab317bf8d79859992ef8b assets/ritualis/items/candle.json
 d4fa00b00f28989f64164759721cac56b5ec195c assets/ritualis/blockstates/white_candle.json
+e0c5fabc8594fc9d459aaed03a3b9b6c0c3f6ba3 assets/ritualis/blockstates/floating_book.json
