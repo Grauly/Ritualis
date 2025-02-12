@@ -39,8 +39,8 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         val actualDeltaTime = time - context.lastTime
         context.lastTime = time
 
-        context.bookPositionHandler.partialTick(actualDeltaTime.toDouble())
-        val position = context.bookPositionHandler.getCurrentPosition()
+        context.bookPositionHandler.partialTick(actualDeltaTime)
+        val position = context.bookPositionHandler.getValue()
         val offset = position.subtract(.5, .5, .5)
 
         context.bookRotationHandler.handleOffset(offset)
