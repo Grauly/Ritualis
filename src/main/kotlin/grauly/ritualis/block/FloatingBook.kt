@@ -30,20 +30,6 @@ class FloatingBook(settings: Settings) : BlockWithEntity(settings.noCollision().
 
     override fun getRenderType(state: BlockState?): BlockRenderType = BlockRenderType.INVISIBLE
 
-    override fun onStateReplaced(
-        state: BlockState,
-        world: World,
-        pos: BlockPos,
-        newState: BlockState,
-        moved: Boolean
-    ) {
-        if (!newState.isOf(this)) return
-        if (!state.isOf(this)) return
-        val blockEntity = world.getBlockEntity(pos)
-        if (blockEntity !is FloatingBookBlockEntity) return
-        blockEntity.notifyStateChange(world, pos, newState)
-    }
-
     override fun <T : BlockEntity?> getTicker(
         world: World,
         state: BlockState,

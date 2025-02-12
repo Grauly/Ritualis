@@ -1,6 +1,7 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
+import grauly.ritualis.Ritualis
 import grauly.ritualis.easing.FloatingBookPositionEasing
 import grauly.ritualis.util.ChangeVariance
 import grauly.ritualis.util.PositionHandler
@@ -36,7 +37,9 @@ class FloatingBookBlockEntity(
             previous.subtract(.5, .5, .5).multiply(-1.0).add(.5, .5, .5)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
-            if (!active) return@ChangeVariance
+            if (!active) {
+                return@ChangeVariance
+            }
             renderingContext.bookPositionHandler.moveTo(newValue)
         }
     )
@@ -52,7 +55,9 @@ class FloatingBookBlockEntity(
             Vec3d(.0, .0, .0).addRandom(random, 10f)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
-            if (isWatchingPlayer || !active) return@ChangeVariance
+            if (isWatchingPlayer || !active) {
+                return@ChangeVariance
+            }
             renderingContext.bookRotationHandler.lookAt(newValue)
         }
     )
@@ -60,7 +65,9 @@ class FloatingBookBlockEntity(
     private var isWatchingPlayer: Boolean = false
     private var active: Boolean = false
 
-    fun notifyStateChange(world: World, pos: BlockPos, state: BlockState) {
+    fun checkStateChange(world: World, pos: BlockPos, state: BlockState) {
+        if (!world.isClient()) return
+        Ritualis.LOGGER.info("receiving state change: {}", state)
         val isNowActive = state.get(FloatingBook.ACTIVE)
         if (active == isNowActive) return
         active = isNowActive
@@ -73,7 +80,14 @@ class FloatingBookBlockEntity(
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
         if (!world.isClient()) return
+        checkStateChange(world, pos, state)
+
+        Ritualis.LOGGER.info("current state: isLookingAtPlayer: {}, active: {}", isWatchingPlayer, active)
+
         renderingContext.ticks++
+        positionVariance.runUpdate(world.getRandom())
+        lookTargetVariance.runUpdate(world.getRandom())
+
         if (state.get(FloatingBook.ACTIVE)) {
             activeRenderingTick(world, pos, state)
         } else {
@@ -86,9 +100,6 @@ class FloatingBookBlockEntity(
     }
 
     private fun activeRenderingTick(world: World, pos: BlockPos, state: BlockState) {
-        positionVariance.runUpdate(world.getRandom())
-        lookTargetVariance.runUpdate(world.getRandom())
-
         val searchStartPos = pos.toCenterPos()
         val lookAtTarget = world.getClosestPlayer(searchStartPos.x, searchStartPos.y, searchStartPos.z, 5.0, false)
         if (lookAtTarget != null) {
