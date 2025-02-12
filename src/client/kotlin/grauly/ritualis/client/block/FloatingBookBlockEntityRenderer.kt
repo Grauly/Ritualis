@@ -30,20 +30,22 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             RenderLayer::getEntitySolid
         )
 
-        val time = entity.renderingContext.ticks + tickDelta
-        val actualDeltaTime = time - entity.renderingContext.lastTime
-        entity.renderingContext.lastTime = time
+        val context = entity.renderingContext;
 
-        entity.bookPositionHandler.partialTick(actualDeltaTime.toDouble())
-        val position = entity.bookPositionHandler.getCurrentPosition()
+        val time = context.ticks + tickDelta
+        val actualDeltaTime = time - context.lastTime
+        context.lastTime = time
+
+        context.bookPositionHandler.partialTick(actualDeltaTime.toDouble())
+        val position = context.bookPositionHandler.getCurrentPosition()
         val offset = position.subtract(.5, .5, .5)
 
-        entity.bookRotationHandler.handleOffset(offset)
-        entity.bookRotationHandler.partialTick(actualDeltaTime)
+        context.bookRotationHandler.handleOffset(offset)
+        context.bookRotationHandler.partialTick(actualDeltaTime)
 
         matrices.push()
         matrices.translate(position)
-        matrices.multiply(entity.bookRotationHandler.getRotation())
+        matrices.multiply(context.bookRotationHandler.getRotation())
 
         //pageTurnAmount: ???
         //leftFlipAmount: left page flip amount from 0 -> 1

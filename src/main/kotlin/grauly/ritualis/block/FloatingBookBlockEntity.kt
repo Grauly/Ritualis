@@ -24,10 +24,6 @@ class FloatingBookBlockEntity(
 ) {
     //only needed client side
     var renderingContext: RenderingContext = RenderingContext(RANDOM.nextInt(1000))
-    val bookRotationHandler: RotationHandler =
-        RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat()))
-    val bookPositionHandler: PositionHandler =
-        PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5),)
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
         20,
         0,
@@ -40,7 +36,7 @@ class FloatingBookBlockEntity(
             previous.subtract(.5, .5, .5).multiply(-1.0).add(.5, .5, .5)
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
-            bookPositionHandler.moveTo(newValue)
+            renderingContext.bookPositionHandler.moveTo(newValue)
         }
     )
 
@@ -56,7 +52,7 @@ class FloatingBookBlockEntity(
         },
         updateCallback = { newValue: Vec3d, oldValue: Vec3d, timeUntilChangeEnds: Int ->
             if (isWatchingPlayer) return@ChangeVariance
-            bookRotationHandler.lookAt(newValue)
+            renderingContext.bookRotationHandler.lookAt(newValue)
         }
     )
 
@@ -67,14 +63,11 @@ class FloatingBookBlockEntity(
     fun tick(world: World, pos: BlockPos, state: BlockState) {
         if(!world.isClient()) return
         renderingContext.ticks++
-        activeRenderingTick(world, pos, state)
-/*
         if(state.get(FloatingBook.ACTIVE)) {
             activeRenderingTick(world, pos, state)
         } else {
             passiveRenderingTick(world, pos, state)
         }
-*/
     }
 
     private fun passiveRenderingTick(world: World, pos: BlockPos, state: BlockState) {
@@ -93,7 +86,7 @@ class FloatingBookBlockEntity(
                 val localPos = lookAtTarget.eyePos.subtract(pos.toCenterPos())
                 lookTargetVariance.pushValue(localPos)
                 lastPlayerLookAtTarget = lookAtTarget.eyePos
-                bookRotationHandler.lookAt(localPos)
+                renderingContext.bookRotationHandler.lookAt(localPos)
             }
         } else {
             isWatchingPlayer = false
@@ -104,7 +97,11 @@ class FloatingBookBlockEntity(
 
     data class RenderingContext(
         var ticks: Int,
-        var lastTime: Float = ticks.toFloat()
+        var lastTime: Float = ticks.toFloat(),
+        val bookRotationHandler: RotationHandler =
+            RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat())),
+        val bookPositionHandler: PositionHandler =
+            PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5),)
     )
 
     companion object {
