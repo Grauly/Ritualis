@@ -63,26 +63,23 @@ class FloatingBookBlockEntity(
     )
     private var lastPlayerLookAtTarget: Vec3d = Vec3d(1.0, .0, .0)
     private var isWatchingPlayer: Boolean = false
-    private var active: Boolean = false
+    var active: Boolean = false
 
     fun checkStateChange(world: World, pos: BlockPos, state: BlockState) {
         if (!world.isClient()) return
-        Ritualis.LOGGER.info("receiving state change: {}", state)
         val isNowActive = state.get(FloatingBook.ACTIVE)
         if (active == isNowActive) return
         active = isNowActive
         if (active) return
         isWatchingPlayer = false
         renderingContext.bookPositionHandler.moveTo(Vec3d(.5, .1, .5))
-        val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0).add(.0, .1, .0)
+        val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0).add(.0,-.4,.0)
         renderingContext.bookRotationHandler.lookAt(newLookVector)
     }
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
         if (!world.isClient()) return
         checkStateChange(world, pos, state)
-
-        Ritualis.LOGGER.info("current state: isLookingAtPlayer: {}, active: {}", isWatchingPlayer, active)
 
         renderingContext.ticks++
         positionVariance.runUpdate(world.getRandom())
