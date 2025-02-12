@@ -28,7 +28,7 @@ class PositionHandler(
     }
 
     fun moveTo(newPosition: Vec3d) {
-        val newMovement = newPosition.subtract(currentPosition)
+        val newMovement = newPosition.subtract(getCurrentPosition())
         val newDistance = newMovement.length()
         val oldDistanceTraveled = startPosition.lerp(targetPosition, delta).length()
         val newDelta = easing.recalculateDelta(delta, newDistance, oldDistanceTraveled)
