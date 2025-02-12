@@ -10,7 +10,7 @@ import net.minecraft.client.render.entity.model.BookModel
 import net.minecraft.client.render.entity.model.EntityModelLayers
 import net.minecraft.client.util.math.MatrixStack
 
-class FloatingBookEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
+class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
     BlockEntityRenderer<FloatingBookBlockEntity> {
 
     private val book = BookModel(ctx.getLayerModelPart(EntityModelLayers.BOOK))
