@@ -18,13 +18,13 @@ class RotationHandler(
     private var targetRotation: Quaternionf = Quaternionf() //c
     private var currentLookAtTarget: Vec3d = Vec3d(.0, .0, .0)
 
-    override fun partialTick(deltaTime: Float) {
+    override fun partialTick(timePassedTicks: Float) {
         //a^-1 * a * X = a^-1 * c
         val rotationQuaternion = Quaternionf(currentRotation).invert().mul(targetRotation)
         val fullMovementAngle = rotationQuaternion.angle()
         val axis =
             Vector3f(rotationQuaternion.x, rotationQuaternion.y, rotationQuaternion.z).div(sin(fullMovementAngle))
-        val maxMovementAngle = maxAngleSpeedPerTick * deltaTime
+        val maxMovementAngle = maxAngleSpeedPerTick * timePassedTicks
 
         if (fullMovementAngle < epsilon || fullMovementAngle > PI * 2 - epsilon || !fullMovementAngle.isFinite()) {
             return
