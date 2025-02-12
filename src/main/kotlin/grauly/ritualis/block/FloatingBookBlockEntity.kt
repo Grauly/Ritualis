@@ -1,7 +1,6 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
-import grauly.ritualis.Ritualis
 import grauly.ritualis.easing.FloatingBookPositionEasing
 import grauly.ritualis.util.ChangeVariance
 import grauly.ritualis.util.PositionHandler
@@ -70,10 +69,14 @@ class FloatingBookBlockEntity(
         val isNowActive = state.get(FloatingBook.ACTIVE)
         if (active == isNowActive) return
         active = isNowActive
-        if (active) return
+        if (active) {
+            renderingContext.bookRotationHandler.rotationOffset = ACTIVE_BOOK_ROTATION_OFFSET
+            return
+        }
         isWatchingPlayer = false
         renderingContext.bookPositionHandler.moveTo(Vec3d(.5, .1, .5))
-        val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0).add(.0,-.4,.0)
+        val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0).add(.0, -.4, .0)
+        renderingContext.bookRotationHandler.rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET
         renderingContext.bookRotationHandler.lookAt(newLookVector)
     }
 
@@ -118,12 +121,18 @@ class FloatingBookBlockEntity(
         var ticks: Int,
         var lastTime: Float = ticks.toFloat(),
         val bookRotationHandler: RotationHandler =
-            RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat())),
+            RotationHandler(rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET),
         val bookPositionHandler: PositionHandler =
-            PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5), maxMovementPerTick = 0.01)
+            PositionHandler(
+                easing = FloatingBookPositionEasing(),
+                startPosition = Vec3d(.5, .1, .5),
+                maxMovementPerTick = 0.01
+            )
     )
 
     companion object {
         val RANDOM: kotlin.random.Random = kotlin.random.Random(0)
+        val ACTIVE_BOOK_ROTATION_OFFSET: Quaternionf = Quaternionf().rotationY((PI / 2).toFloat())
+        val PASSIVE_BOOK_ROTATION_OFFSET: Quaternionf = Quaternionf()
     }
 }

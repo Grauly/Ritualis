@@ -11,7 +11,7 @@ import kotlin.math.sin
 class RotationHandler(
     private val maxAngleSpeedPerTick: Float = 0.1f,
     private val epsilon: Float = 0.01f,
-    private val rotationOffset: Quaternionf = Quaternionf()
+    var rotationOffset: Quaternionf = Quaternionf()
 ) {
     private var currentRotation: Quaternionf = Quaternionf() //a
     private var targetRotation: Quaternionf = Quaternionf() //c
