@@ -1,7 +1,7 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
-import grauly.ritualis.easing.SimpleSinEasing
+import grauly.ritualis.easing.FloatingBookPositionEasing
 import grauly.ritualis.util.ChangeVariance
 import grauly.ritualis.util.PositionHandler
 import grauly.ritualis.util.RotationHandler
@@ -27,7 +27,7 @@ class FloatingBookBlockEntity(
     val bookRotationHandler: RotationHandler =
         RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat()))
     val bookPositionHandler: PositionHandler =
-        PositionHandler(easing = SimpleSinEasing(), startPosition = Vec3d(.5, .62, .5),)
+        PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5),)
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
         20,
         0,
