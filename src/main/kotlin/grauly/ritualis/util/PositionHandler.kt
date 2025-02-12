@@ -7,7 +7,7 @@ import kotlin.math.min
 import kotlin.math.pow
 
 class PositionHandler(
-    private val maxMovementPerTick: Double = 0.02,
+    private val maxMovementPerTick: Double = 0.1,
     private val epsilon: Double = 0.001,
     private val easing: EasingHandler = EasingHandler.IdentityEasingHandler(),
     private var startPosition: Vec3d = Vec3d(.0, .0, .0)

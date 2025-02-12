@@ -123,7 +123,7 @@ class FloatingBookBlockEntity(
         val bookRotationHandler: RotationHandler =
             RotationHandler(rotationOffset = Quaternionf().rotationY((PI / 2).toFloat())),
         val bookPositionHandler: PositionHandler =
-            PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5))
+            PositionHandler(easing = FloatingBookPositionEasing(), startPosition = Vec3d(.5, .62, .5), maxMovementPerTick = 0.01)
     )
 
     companion object {
