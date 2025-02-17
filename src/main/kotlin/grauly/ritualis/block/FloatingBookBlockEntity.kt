@@ -1,7 +1,6 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
-import grauly.ritualis.Ritualis
 import grauly.ritualis.easing.FloatingBookPositionEasing
 import grauly.ritualis.util.ChangeVariance
 import grauly.ritualis.util.FloatHandler
@@ -25,15 +24,7 @@ class FloatingBookBlockEntity(
     state
 ) {
     var renderingContext: RenderingContext = RenderingContext(RANDOM.nextInt(1000))
-    init {
-        val newLookVector = Vec3d(.0, .0, .0)
-            .add(RANDOM.nextDouble(-1.0,1.0),RANDOM.nextDouble(-1.0,1.0),RANDOM.nextDouble(-1.0,1.0))
-            .multiply(1.0, .0, 1.0)
-            .add(.0, -.4, .0)
-        renderingContext.bookRotationHandler.rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET
-        renderingContext.bookRotationHandler.setValue(newLookVector)
-        Ritualis.LOGGER.info("lol")
-    }
+
     //only needed client side
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
         20,
@@ -142,8 +133,15 @@ class FloatingBookBlockEntity(
     data class RenderingContext(
         var ticks: Int,
         var lastTime: Float = ticks.toFloat(),
-        val bookRotationHandler: RotationHandler =
-            RotationHandler(rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET),
+        var bookRotationHandler: RotationHandler =
+            RotationHandler(
+                startLookAt = Vec3d(.0, .0, .0)
+                    .add(RANDOM.nextDouble(-1.0, 1.0), RANDOM.nextDouble(-1.0, 1.0), RANDOM.nextDouble(-1.0, 1.0))
+                    .multiply(1.0, .0, 1.0)
+                    //.add(.0, -.4, .0)
+                ,
+                rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET
+            ),
         val bookPositionHandler: PositionHandler =
             PositionHandler(
                 easing = FloatingBookPositionEasing(),

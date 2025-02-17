@@ -45,7 +45,7 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         val position = context.bookPositionHandler.getValue()
         val offset = position.subtract(.5, .5, .5)
 
-        context.bookRotationHandler.handleOffset(offset)
+        if(entity.active) context.bookRotationHandler.handleOffset(offset)
         context.bookRotationHandler.partialTick(actualDeltaTime)
 
         val rot = context.bookRotationHandler.getValue()

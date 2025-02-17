@@ -13,10 +13,23 @@ class RotationHandler(
     private val maxAngleSpeedPerTick: Float = 0.1f,
     private val epsilon: Float = 0.01f,
     var rotationOffset: Quaternionf = Quaternionf()
-): ValueHandler<Quaternionf> {
+) : ValueHandler<Quaternionf> {
     private var currentRotation: Quaternionf = Quaternionf() //a
     private var targetRotation: Quaternionf = Quaternionf() //c
     private var currentLookAtTarget: Vec3d = Vec3d(.0, .0, .0)
+
+    constructor(
+        startLookAt: Vec3d,
+        maxAngleSpeedPerTick: Float = 0.1f,
+        epsilon: Float = 0.01f,
+        rotationOffset: Quaternionf = Quaternionf()
+    ) : this(
+        maxAngleSpeedPerTick,
+        epsilon,
+        rotationOffset
+    ) {
+        setValue(startLookAt)
+    }
 
     override fun partialTick(timePassedTicks: Float) {
         //a^-1 * a * X = a^-1 * c
