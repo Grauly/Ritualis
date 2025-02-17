@@ -17,6 +17,7 @@ import kotlin.reflect.KFunction1
 object ModItems {
 
     val FLOATING_BOOK_ITEM = registerBlockItem(ModBlocks.FLOATING_BOOK, "floating_book")
+    val RITUAL_LINE_ITEM = registerBlockItem(ModBlocks.RITUAL_LINE, "ritual_line")
 
     private fun registerBlockItem(block: Block, itemID: String, settings: Settings = Settings()): Item {
         val id = Identifier.of(Ritualis.MODID, itemID)
@@ -50,6 +51,7 @@ object ModItems {
         }
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register { group ->
             group.addAfter(Items.ENCHANTING_TABLE, FLOATING_BOOK_ITEM)
+            group.addAfter(Items.ENCHANTING_TABLE, RITUAL_LINE_ITEM)
         }
     }
 

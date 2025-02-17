@@ -22,5 +22,7 @@ class BlockTagDatagen(
             candles.add(candle)
             ritualCandles.add(candle)
         }
+        val ritualConnectable = getOrCreateTagBuilder(ModBlockTags.RITUAL_CONNECTABLE)
+        ritualConnectable.add(ModBlocks.RITUAL_LINE)
     }
 }
