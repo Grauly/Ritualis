@@ -82,15 +82,17 @@ class FloatingBookBlockEntity(
         renderingContext.bookRotationHandler.rotationOffset = ACTIVE_BOOK_ROTATION_OFFSET
         renderingContext.bookPositionHandler.updateGoal(Vec3d(.5, .5, .5))
         renderingContext.bookOpenStatusHandler.updateGoal(1f)
+        renderingContext.referenceLocation = ACTIVE_MAIN_POSITION
     }
 
     private fun onChangeToPassive(world: World, pos: BlockPos, state: BlockState) {
         isWatchingPlayer = false
         renderingContext.bookPositionHandler.updateGoal(Vec3d(.5, .1, .5))
-        val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0).add(.0, -.4, .0)
+        val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0)
         renderingContext.bookRotationHandler.rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET
         renderingContext.bookRotationHandler.updateGoal(newLookVector)
         renderingContext.bookOpenStatusHandler.updateGoal(0f)
+        renderingContext.referenceLocation = PASSIVE_MAIN_POSITION
     }
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
@@ -136,24 +138,24 @@ class FloatingBookBlockEntity(
         var bookRotationHandler: RotationHandler =
             RotationHandler(
                 startLookAt = Vec3d(.0, .0, .0)
-                    .add(RANDOM.nextDouble(-1.0, 1.0), RANDOM.nextDouble(-1.0, 1.0), RANDOM.nextDouble(-1.0, 1.0))
-                    .multiply(1.0, .0, 1.0)
-                    //.add(.0, -.4, .0)
-                ,
+                    .add(RANDOM.nextDouble(-1.0, 1.0), 0.0, RANDOM.nextDouble(-1.0, 1.0)),
                 rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET
             ),
         val bookPositionHandler: PositionHandler =
             PositionHandler(
                 easing = FloatingBookPositionEasing(),
-                startPosition = Vec3d(.5, .1, .5),
+                startPosition = PASSIVE_MAIN_POSITION,
                 maxMovementPerTick = 0.01
             ),
-        val bookOpenStatusHandler: FloatHandler = FloatHandler()
+        val bookOpenStatusHandler: FloatHandler = FloatHandler(),
+        var referenceLocation: Vec3d = PASSIVE_MAIN_POSITION
     )
 
     companion object {
         val RANDOM: kotlin.random.Random = kotlin.random.Random(0)
         val ACTIVE_BOOK_ROTATION_OFFSET: Quaternionf = Quaternionf().rotationY((PI / 2).toFloat())
         val PASSIVE_BOOK_ROTATION_OFFSET: Quaternionf = Quaternionf().rotationX((PI / 2).toFloat())
+        val ACTIVE_MAIN_POSITION: Vec3d = Vec3d(.5, .5, .5)
+        val PASSIVE_MAIN_POSITION: Vec3d = Vec3d(.5, .1, .5)
     }
 }

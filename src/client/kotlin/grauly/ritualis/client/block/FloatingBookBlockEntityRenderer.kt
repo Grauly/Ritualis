@@ -43,9 +43,9 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         context.bookOpenStatusHandler.partialTick(actualDeltaTime)
         context.bookPositionHandler.partialTick(actualDeltaTime)
         val position = context.bookPositionHandler.getValue()
-        val offset = position.subtract(.5, .5, .5)
+        val offset = position.subtract(context.referenceLocation)
 
-        if(entity.active) context.bookRotationHandler.handleOffset(offset)
+        context.bookRotationHandler.handleOffset(offset)
         context.bookRotationHandler.partialTick(actualDeltaTime)
 
         val rot = context.bookRotationHandler.getValue()
@@ -59,7 +59,6 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         //rightFlipAmount: right page flip amount from 0 -> 1
         //pageTurnSpeed: open/close of book from 0 -> 1
         book.setPageAngles(0f, .5f, 0f, context.bookOpenStatusHandler.getValue())
-        DebugRenderers.debugSpace(matrices, vertexConsumers)
         book.render(matrices, vertexConsumer, light, overlay)
         matrices.pop()
     }
