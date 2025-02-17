@@ -1,8 +1,6 @@
 package grauly.ritualis.client.block
 
-import grauly.ritualis.Ritualis
 import grauly.ritualis.block.FloatingBookBlockEntity
-import grauly.ritualis.client.debug.DebugRenderers
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
@@ -11,8 +9,8 @@ import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRender
 import net.minecraft.client.render.entity.model.BookModel
 import net.minecraft.client.render.entity.model.EntityModelLayers
 import net.minecraft.client.util.math.MatrixStack
-import org.joml.Quaternionf
 import kotlin.math.PI
+import kotlin.math.sin
 
 class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
     BlockEntityRenderer<FloatingBookBlockEntity> {
@@ -34,7 +32,7 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
             RenderLayer::getEntitySolid
         )
 
-        val context = entity.renderingContext;
+        val context = entity.renderingContext
 
         val time = context.ticks + tickDelta
         val actualDeltaTime = time - context.lastTime
@@ -58,7 +56,8 @@ class FloatingBookBlockEntityRenderer(ctx: BlockEntityRendererFactory.Context) :
         //leftFlipAmount: left page flip amount from 0 -> 1
         //rightFlipAmount: right page flip amount from 0 -> 1
         //pageTurnSpeed: open/close of book from 0 -> 1
-        book.setPageAngles(0f, .5f, 0f, context.bookOpenStatusHandler.getValue())
+        val bookOpenFactor = ((sin(PI * time / 20) + 1) * .05 + .9) * context.bookOpenStatusHandler.getValue()
+        book.setPageAngles(time, .5f, 0f, bookOpenFactor.toFloat())
         book.render(matrices, vertexConsumer, light, overlay)
         matrices.pop()
     }
