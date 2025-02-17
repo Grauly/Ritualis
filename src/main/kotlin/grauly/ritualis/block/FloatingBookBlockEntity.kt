@@ -1,8 +1,10 @@
 package grauly.ritualis.block
 
 import grauly.ritualis.ModBlockEntities
+import grauly.ritualis.Ritualis
 import grauly.ritualis.easing.FloatingBookPositionEasing
 import grauly.ritualis.util.ChangeVariance
+import grauly.ritualis.util.FloatHandler
 import grauly.ritualis.util.PositionHandler
 import grauly.ritualis.util.RotationHandler
 import net.minecraft.block.BlockState
@@ -22,8 +24,17 @@ class FloatingBookBlockEntity(
     pos,
     state
 ) {
-    //only needed client side
     var renderingContext: RenderingContext = RenderingContext(RANDOM.nextInt(1000))
+    init {
+        val newLookVector = Vec3d(.0, .0, .0)
+            .add(RANDOM.nextDouble(-1.0,1.0),RANDOM.nextDouble(-1.0,1.0),RANDOM.nextDouble(-1.0,1.0))
+            .multiply(1.0, .0, 1.0)
+            .add(.0, -.4, .0)
+        renderingContext.bookRotationHandler.rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET
+        renderingContext.bookRotationHandler.setValue(newLookVector)
+        Ritualis.LOGGER.info("lol")
+    }
+    //only needed client side
     private val positionVariance: ChangeVariance<Vec3d> = ChangeVariance(
         20,
         0,
@@ -70,15 +81,25 @@ class FloatingBookBlockEntity(
         if (active == isNowActive) return
         active = isNowActive
         if (active) {
-            renderingContext.bookRotationHandler.rotationOffset = ACTIVE_BOOK_ROTATION_OFFSET
-            renderingContext.bookPositionHandler.updateGoal(Vec3d(.5, .5, .5))
-            return
+            onChangedToActive(world, pos, state)
+        } else {
+            onChangeToPassive(world, pos, state)
         }
+    }
+
+    private fun onChangedToActive(world: World, pos: BlockPos, state: BlockState) {
+        renderingContext.bookRotationHandler.rotationOffset = ACTIVE_BOOK_ROTATION_OFFSET
+        renderingContext.bookPositionHandler.updateGoal(Vec3d(.5, .5, .5))
+        renderingContext.bookOpenStatusHandler.updateGoal(1f)
+    }
+
+    private fun onChangeToPassive(world: World, pos: BlockPos, state: BlockState) {
         isWatchingPlayer = false
         renderingContext.bookPositionHandler.updateGoal(Vec3d(.5, .1, .5))
         val newLookVector = Vec3d(.0, .0, .0).addRandom(world.getRandom(), 1f).multiply(1.0, .0, 1.0).add(.0, -.4, .0)
         renderingContext.bookRotationHandler.rotationOffset = PASSIVE_BOOK_ROTATION_OFFSET
         renderingContext.bookRotationHandler.updateGoal(newLookVector)
+        renderingContext.bookOpenStatusHandler.updateGoal(0f)
     }
 
     fun tick(world: World, pos: BlockPos, state: BlockState) {
@@ -128,12 +149,13 @@ class FloatingBookBlockEntity(
                 easing = FloatingBookPositionEasing(),
                 startPosition = Vec3d(.5, .1, .5),
                 maxMovementPerTick = 0.01
-            )
+            ),
+        val bookOpenStatusHandler: FloatHandler = FloatHandler()
     )
 
     companion object {
         val RANDOM: kotlin.random.Random = kotlin.random.Random(0)
         val ACTIVE_BOOK_ROTATION_OFFSET: Quaternionf = Quaternionf().rotationY((PI / 2).toFloat())
-        val PASSIVE_BOOK_ROTATION_OFFSET: Quaternionf = Quaternionf()
+        val PASSIVE_BOOK_ROTATION_OFFSET: Quaternionf = Quaternionf().rotationX((PI / 2).toFloat())
     }
 }

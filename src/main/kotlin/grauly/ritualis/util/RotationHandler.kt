@@ -49,6 +49,12 @@ class RotationHandler(
         currentRotation = newValue
     }
 
+    fun setValue(newLookAt: Vec3d) {
+        currentLookAtTarget = newLookAt
+        adjustRotationTo(currentLookAtTarget)
+        currentRotation = Quaternionf(targetRotation)
+    }
+
     override fun updateGoal(newGoal: Quaternionf) {
         currentLookAtTarget = lookAtFromQuaternion(newGoal)
         targetRotation = newGoal
