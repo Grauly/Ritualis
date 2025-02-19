@@ -1,0 +1,85 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_dot"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line",
+        "y": 0
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line",
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch",
+        "y": 0
+      },
+      "when": {
+        "east": "true",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch",
+        "y": 180
+      },
+      "when": {
+        "south": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch",
+        "y": 270
+      },
+      "when": {
+        "north": "true",
+        "west": "true"
+      }
+    }
+  ]
+}

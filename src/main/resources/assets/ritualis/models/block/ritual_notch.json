@@ -1,0 +1,17 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "ritualis:block/ritual_notch",
+		"particle": "ritualis:block/ritual_notch"
+	},
+	"elements": [
+		{
+			"from": [11, 0, 3],
+			"to": [13, 1, 5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 0, 3]},
+			"faces": {
+				"up": {"uv": [11, 3, 13, 5], "texture": "#0", "tintindex": 0}
+			}
+		}
+	]
+}
