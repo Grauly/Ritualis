@@ -10,8 +10,10 @@ import net.minecraft.state.StateManager
 import net.minecraft.state.property.BooleanProperty
 import net.minecraft.state.property.IntProperty
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.World
-import net.minecraft.world.block.WireOrientation
+import net.minecraft.util.math.Direction
+import net.minecraft.util.math.random.Random
+import net.minecraft.world.WorldView
+import net.minecraft.world.tick.ScheduledTickView
 import java.awt.Color
 
 class RitualLine(settings: Settings) : Block(settings) {
@@ -40,15 +42,16 @@ class RitualLine(settings: Settings) : Block(settings) {
         return finalState
     }
 
-    override fun neighborUpdate(
+    override fun getStateForNeighborUpdate(
         state: BlockState,
-        world: World,
+        world: WorldView,
+        tickView: ScheduledTickView,
         pos: BlockPos,
-        sourceBlock: Block,
-        wireOrientation: WireOrientation?,
-        notify: Boolean
-    ) {
-        super.neighborUpdate(state, world, pos, sourceBlock, wireOrientation, notify)
+        direction: Direction,
+        neighborPos: BlockPos,
+        neighborState: BlockState,
+        random: Random
+    ): BlockState {
         var finalState = defaultState
         finalState = finalState.with(POWER, state.get(POWER))
         finalState =
@@ -59,7 +62,7 @@ class RitualLine(settings: Settings) : Block(settings) {
             finalState.with(CONNECTED_SOUTH, world.getBlockState(pos.south()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
         finalState =
             finalState.with(CONNECTED_WEST, world.getBlockState(pos.west()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
-        world.setBlockState(pos, finalState)
+        return finalState
     }
 
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
