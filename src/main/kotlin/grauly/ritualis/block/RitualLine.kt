@@ -3,11 +3,13 @@ package grauly.ritualis.block
 import grauly.ritualis.ModBlockTags
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
-import net.minecraft.block.RedstoneWireBlock
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.BooleanProperty
 import net.minecraft.state.property.IntProperty
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
+import net.minecraft.world.block.WireOrientation
 
 class RitualLine(settings: Settings) : Block(settings) {
 
@@ -29,6 +31,24 @@ class RitualLine(settings: Settings) : Block(settings) {
         finalState = finalState.with(CONNECTED_SOUTH, world.getBlockState(pos.south()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
         finalState = finalState.with(CONNECTED_WEST, world.getBlockState(pos.west()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
         return finalState
+    }
+
+    override fun neighborUpdate(
+        state: BlockState,
+        world: World,
+        pos: BlockPos,
+        sourceBlock: Block,
+        wireOrientation: WireOrientation?,
+        notify: Boolean
+    ) {
+        super.neighborUpdate(state, world, pos, sourceBlock, wireOrientation, notify)
+        var finalState = defaultState
+        finalState = finalState.with(POWER, state.get(POWER))
+        finalState = finalState.with(CONNECTED_NORTH, world.getBlockState(pos.north()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
+        finalState = finalState.with(CONNECTED_EAST, world.getBlockState(pos.east()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
+        finalState = finalState.with(CONNECTED_SOUTH, world.getBlockState(pos.south()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
+        finalState = finalState.with(CONNECTED_WEST, world.getBlockState(pos.west()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
+        world.setBlockState(pos, finalState)
     }
 
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
