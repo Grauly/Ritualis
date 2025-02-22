@@ -7,5 +7,6 @@ class RitualisClient : ClientModInitializer {
     override fun onInitializeClient() {
         ModClientParticles.init()
         ModBlockEntityRenderers.init()
+        ModColorProviders.init()
     }
 }
