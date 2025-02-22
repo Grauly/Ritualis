@@ -18,7 +18,7 @@ object ModBlocks {
     val candles = mutableListOf<Block>()
 
     val FLOATING_BOOK = register("floating_book", ::FloatingBook)
-    val RITUAL_LINE = register("ritual_line", ::RitualLine)
+    val RITUAL_LINE = register("ritual_line", ::RitualLine, AbstractBlock.Settings.create().noCollision().nonOpaque().breakInstantly())
 
     private fun register(
         blockID: String,
