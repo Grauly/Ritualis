@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.minecraft.block.BlockState
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.BlockRenderView
-import java.awt.Color
 
 object ModColorProviders {
     fun init() {
@@ -15,7 +14,7 @@ object ModColorProviders {
               view: BlockRenderView?,
               pos: BlockPos?,
               tintIndex: Int ->
-                state.get(RitualLine.POWER) * Color(0, 200, 255).rgb
+                RitualLine.COLORS[state.get(RitualLine.POWER)]
             }, ModBlocks.RITUAL_LINE
         )
     }
