@@ -30,16 +30,7 @@ class RitualLine(settings: Settings) : Block(settings) {
     override fun getPlacementState(ctx: ItemPlacementContext): BlockState {
         val world = ctx.world
         val pos = ctx.blockPos
-        var finalState = defaultState
-        finalState =
-            finalState.with(CONNECTED_NORTH, world.getBlockState(pos.north()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
-        finalState =
-            finalState.with(CONNECTED_EAST, world.getBlockState(pos.east()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
-        finalState =
-            finalState.with(CONNECTED_SOUTH, world.getBlockState(pos.south()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
-        finalState =
-            finalState.with(CONNECTED_WEST, world.getBlockState(pos.west()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
-        return finalState
+        return calculateConnectionState(world, pos)
     }
 
     override fun getStateForNeighborUpdate(
@@ -52,8 +43,13 @@ class RitualLine(settings: Settings) : Block(settings) {
         neighborState: BlockState,
         random: Random
     ): BlockState {
-        var finalState = defaultState
+        var finalState = calculateConnectionState(world, pos)
         finalState = finalState.with(POWER, state.get(POWER))
+        return finalState
+    }
+
+    private fun calculateConnectionState(world: WorldView, pos: BlockPos): BlockState {
+        var finalState = defaultState
         finalState =
             finalState.with(CONNECTED_NORTH, world.getBlockState(pos.north()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
         finalState =
@@ -63,6 +59,7 @@ class RitualLine(settings: Settings) : Block(settings) {
         finalState =
             finalState.with(CONNECTED_WEST, world.getBlockState(pos.west()).isIn(ModBlockTags.RITUAL_CONNECTABLE))
         return finalState
+
     }
 
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>) {
