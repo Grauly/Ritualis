@@ -8,5 +8,6 @@ class RitualisClient : ClientModInitializer {
         ModClientParticles.init()
         ModBlockEntityRenderers.init()
         ModColorProviders.init()
+        ModRenderLayerRegistering.init()
     }
 }
