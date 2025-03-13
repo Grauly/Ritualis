@@ -1,0 +1,20 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "ritualis:block/ritual_flares",
+		"particle": "ritualis:block/ritual_flares"
+	},
+	"elements": [
+		{
+			"from": [5, 0, 5],
+			"to": [11, 11, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"north": {"uv": [10, 0, 16, 11], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [6, 0, 12, 11], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [0, 0, 6, 11], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [4, 0, 10, 11], "texture": "#0", "tintindex": 0}
+			}
+		}
+	]
+}

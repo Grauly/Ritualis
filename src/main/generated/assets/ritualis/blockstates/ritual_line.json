@@ -7,11 +7,30 @@
     },
     {
       "apply": {
+        "model": "ritualis:block/ritual_dot_flare",
+        "y": 0
+      },
+      "when": {
+        "power": "4"
+      }
+    },
+    {
+      "apply": {
         "model": "ritualis:block/ritual_line",
         "y": 0
       },
       "when": {
         "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_flare",
+        "y": 0
+      },
+      "when": {
+        "north": "true",
+        "power": "4"
       }
     },
     {
@@ -25,6 +44,16 @@
     },
     {
       "apply": {
+        "model": "ritualis:block/ritual_line_flare",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "power": "4"
+      }
+    },
+    {
+      "apply": {
         "model": "ritualis:block/ritual_line",
         "y": 180
       },
@@ -34,10 +63,30 @@
     },
     {
       "apply": {
+        "model": "ritualis:block/ritual_line_flare",
+        "y": 180
+      },
+      "when": {
+        "power": "4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
         "model": "ritualis:block/ritual_line",
         "y": 270
       },
       "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_flare",
+        "y": 270
+      },
+      "when": {
+        "power": "4",
         "west": "true"
       }
     },
@@ -53,11 +102,33 @@
     },
     {
       "apply": {
+        "model": "ritualis:block/ritual_notch_flare",
+        "y": 0
+      },
+      "when": {
+        "east": "true",
+        "north": "true",
+        "power": "4"
+      }
+    },
+    {
+      "apply": {
         "model": "ritualis:block/ritual_notch",
         "y": 90
       },
       "when": {
         "east": "true",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch_flare",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "power": "4",
         "south": "true"
       }
     },
@@ -73,11 +144,33 @@
     },
     {
       "apply": {
+        "model": "ritualis:block/ritual_notch_flare",
+        "y": 180
+      },
+      "when": {
+        "power": "4",
+        "south": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
         "model": "ritualis:block/ritual_notch",
         "y": 270
       },
       "when": {
         "north": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch_flare",
+        "y": 270
+      },
+      "when": {
+        "north": "true",
+        "power": "4",
         "west": "true"
       }
     }
