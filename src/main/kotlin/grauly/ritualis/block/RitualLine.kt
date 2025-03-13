@@ -132,7 +132,6 @@ class RitualLine(settings: Settings) : Block(settings) {
         private fun generatePallete(): IntArray {
             val valueAmount = POWER.values.last()
             val array = IntArray(valueAmount + 1)
-            Ritualis.LOGGER.info("{}", valueAmount)
             for (i: Int in 0..valueAmount) {
                 array[i] = OkLabColorSpace.interpolate(START_COLOR, END_COLOR, i / valueAmount.toDouble()).rgb
             }
