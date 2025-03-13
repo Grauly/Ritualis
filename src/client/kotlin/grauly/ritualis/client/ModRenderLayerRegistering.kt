@@ -6,6 +6,6 @@ import net.minecraft.client.render.RenderLayer
 
 object ModRenderLayerRegistering {
     fun init() {
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RITUAL_LINE, RenderLayer.getCutout())
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RITUAL_LINE, RenderLayer.getTranslucent())
     }
 }
