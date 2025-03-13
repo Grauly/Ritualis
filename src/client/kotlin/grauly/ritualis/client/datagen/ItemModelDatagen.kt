@@ -5,6 +5,7 @@ import grauly.ritualis.ModItems
 import grauly.ritualis.Ritualis
 import net.minecraft.client.data.ItemModelGenerator
 import net.minecraft.client.data.ItemModels
+import net.minecraft.client.data.Models
 import net.minecraft.item.Item
 import net.minecraft.util.Identifier
 
@@ -18,6 +19,7 @@ object ItemModelDatagen {
             generateCandleItemModel(item, "${color.getName()}_", itemModelGenerator)
         }
         itemModelGenerator.register(ModItems.FLOATING_BOOK_ITEM)
+        itemModelGenerator.register(ModItems.RITUAL_LINE_ITEM, Models.GENERATED)
     }
 
     private fun generateCandleItemModel(
