@@ -76,7 +76,9 @@ object BlockModelDatagen {
     }
 
     private fun createRotationSegmentBSV(rotation: Rotation, model: String): BlockStateVariant =
-        BlockStateVariant.create().put(VariantSettings.Y, rotation)
+        BlockStateVariant.create()
+            .put(VariantSettings.Y, rotation)
+            .put(VariantSettings.UVLOCK, true)
             .put(VariantSettings.MODEL, Identifier.of(Ritualis.MODID, model))
 
     private fun createCandleBSV(candleNumber: Int, lit: Boolean, colorPrefix: String): BlockStateVariant? {
