@@ -1,7 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "ritualis:block/ritual_flares"
+		"1": "ritualis:block/ritual_flares",
+		"particle": "ritualis:block/ritual_flares"
 	},
 	"elements": [
 		{
