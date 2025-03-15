@@ -113,8 +113,8 @@ class RitualLine(settings: Settings) : Block(settings) {
         val CONNECTED_SOUTH: BooleanProperty = BooleanProperty.of("south")
         val CONNECTED_WEST: BooleanProperty = BooleanProperty.of("west")
         val POWER: IntProperty = IntProperty.of("power", 0, 4)
-        private val START_COLOR: Color = Color(0x8b, 0x02, 0xd6) //0xff8b02d6.toInt()
-        private val END_COLOR: Color = Color(0xcb, 0x02, 0xd6) //0xffcb02d6.toInt()
+        private val START_COLOR: Color = Color(59, 0, 91)
+        private val END_COLOR: Color = Color(241, 42, 252)
         val COLORS = generatePallete()
 
         val DOT_SHAPE: VoxelShape = createCuboidShape(5.0, 0.0, 5.0, 11.0, 1.0, 11.0)

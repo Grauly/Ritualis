@@ -1,0 +1,45 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "ritualis:block/ritual_flares",
+		"particle": "ritualis:block/ritual_flares"
+	},
+	"elements": [
+		{
+			"from": [5, 0, 11],
+			"to": [11, 5, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"north": {"uv": [16, 11, 10, 16], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [5, 11, 11, 16], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"from": [11, 0, 5],
+			"to": [11, 5, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"east": {"uv": [5, 11, 11, 16], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [11, 11, 5, 16], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"from": [5, 0, 5],
+			"to": [11, 5, 5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"north": {"uv": [5, 11, 11, 16], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [6, 11, 0, 16], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"from": [5, 0, 5],
+			"to": [5, 5, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"east": {"uv": [4, 11, 10, 16], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [11, 11, 5, 16], "texture": "#0", "tintindex": 0}
+			}
+		}
+	]
+}

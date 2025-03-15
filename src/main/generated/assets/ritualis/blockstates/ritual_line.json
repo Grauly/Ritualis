@@ -7,16 +7,6 @@
     },
     {
       "apply": {
-        "model": "ritualis:block/ritual_dot_flare",
-        "uvlock": true,
-        "y": 0
-      },
-      "when": {
-        "power": "4"
-      }
-    },
-    {
-      "apply": {
         "model": "ritualis:block/ritual_line",
         "uvlock": true,
         "y": 0
@@ -32,6 +22,29 @@
         "y": 0
       },
       "when": {
+        "north": "true",
+        "power": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch",
+        "uvlock": true,
+        "y": 0
+      },
+      "when": {
+        "east": "true",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch_flare",
+        "uvlock": true,
+        "y": 0
+      },
+      "when": {
+        "east": "true",
         "north": "true",
         "power": "4"
       }
@@ -59,71 +72,6 @@
     },
     {
       "apply": {
-        "model": "ritualis:block/ritual_line",
-        "uvlock": true,
-        "y": 180
-      },
-      "when": {
-        "south": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "ritualis:block/ritual_line_flare",
-        "uvlock": true,
-        "y": 180
-      },
-      "when": {
-        "power": "4",
-        "south": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "ritualis:block/ritual_line",
-        "uvlock": true,
-        "y": 270
-      },
-      "when": {
-        "west": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "ritualis:block/ritual_line_flare",
-        "uvlock": true,
-        "y": 270
-      },
-      "when": {
-        "power": "4",
-        "west": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "ritualis:block/ritual_notch",
-        "uvlock": true,
-        "y": 0
-      },
-      "when": {
-        "east": "true",
-        "north": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "ritualis:block/ritual_notch_flare",
-        "uvlock": true,
-        "y": 0
-      },
-      "when": {
-        "east": "true",
-        "north": "true",
-        "power": "4"
-      }
-    },
-    {
-      "apply": {
         "model": "ritualis:block/ritual_notch",
         "uvlock": true,
         "y": 90
@@ -141,6 +89,27 @@
       },
       "when": {
         "east": "true",
+        "power": "4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_flare",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
         "power": "4",
         "south": "true"
       }
@@ -170,6 +139,27 @@
     },
     {
       "apply": {
+        "model": "ritualis:block/ritual_line",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_flare",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "power": "4",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
         "model": "ritualis:block/ritual_notch",
         "uvlock": true,
         "y": 270
@@ -189,6 +179,114 @@
         "north": "true",
         "power": "4",
         "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_dot_flare_tall",
+        "uvlock": true,
+        "y": 0
+      },
+      "when": {
+        "AND": [
+          {
+            "OR": [
+              {
+                "east": "true",
+                "north": "true",
+                "south": "true"
+              },
+              {
+                "east": "true",
+                "south": "true",
+                "west": "true"
+              },
+              {
+                "north": "true",
+                "south": "true",
+                "west": "true"
+              },
+              {
+                "east": "true",
+                "north": "true",
+                "west": "true"
+              }
+            ]
+          },
+          {
+            "power": "4"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_dot_flare",
+        "uvlock": true,
+        "y": 0
+      },
+      "when": {
+        "AND": [
+          {
+            "AND": [
+              {
+                "OR": [
+                  {
+                    "north": "!true"
+                  },
+                  {
+                    "east": "!true"
+                  },
+                  {
+                    "south": "!true"
+                  }
+                ]
+              },
+              {
+                "OR": [
+                  {
+                    "east": "!true"
+                  },
+                  {
+                    "south": "!true"
+                  },
+                  {
+                    "west": "!true"
+                  }
+                ]
+              },
+              {
+                "OR": [
+                  {
+                    "south": "!true"
+                  },
+                  {
+                    "west": "!true"
+                  },
+                  {
+                    "north": "!true"
+                  }
+                ]
+              },
+              {
+                "OR": [
+                  {
+                    "west": "!true"
+                  },
+                  {
+                    "north": "!true"
+                  },
+                  {
+                    "east": "!true"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "power": "4"
+          }
+        ]
       }
     }
   ]

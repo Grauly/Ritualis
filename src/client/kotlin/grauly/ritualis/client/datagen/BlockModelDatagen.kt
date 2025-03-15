@@ -24,44 +24,57 @@ object BlockModelDatagen {
             )
         }
         blockStateModelGenerator.registerGeneric(ModBlocks.FLOATING_BOOK)
+        generateRitualLine(blockStateModelGenerator)
+    }
+
+    private fun generateRitualLine(blockStateModelGenerator: BlockStateModelGenerator) {
         val lineSegment = "block/ritual_line"
         val lineNotch = "block/ritual_notch"
         val lineDot = "block/ritual_dot"
         val ritualLine = MultipartBlockStateSupplier.create(ModBlocks.RITUAL_LINE)
             .with(BlockStateVariant.create().put(VariantSettings.MODEL, Identifier.of(Ritualis.MODID, lineDot)))
-            .with(When.create().set(RitualLine.POWER, 4), createRotationSegmentBSV(Rotation.R0, "${lineDot}_flare"))
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_NORTH, true) }, Rotation.R0, lineSegment
+
+        val directions = listOf(
+            RitualLine.CONNECTED_NORTH,
+            RitualLine.CONNECTED_EAST,
+            RitualLine.CONNECTED_SOUTH,
+            RitualLine.CONNECTED_WEST
         )
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_EAST, true) }, Rotation.R90, lineSegment
-        )
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_SOUTH, true) }, Rotation.R180, lineSegment
-        )
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_WEST, true) }, Rotation.R270, lineSegment
-        )
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_NORTH, true).set(RitualLine.CONNECTED_EAST, true) },
-            Rotation.R0,
-            lineNotch
-        )
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_EAST, true).set(RitualLine.CONNECTED_SOUTH, true) },
-            Rotation.R90,
-            lineNotch
-        )
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_SOUTH, true).set(RitualLine.CONNECTED_WEST, true) },
-            Rotation.R180,
-            lineNotch
-        )
-        createRitualLinePart(ritualLine,
-            { When.create().set(RitualLine.CONNECTED_WEST, true).set(RitualLine.CONNECTED_NORTH, true) },
-            Rotation.R270,
-            lineNotch
-        )
+        val rotations = listOf(Rotation.R0, Rotation.R90, Rotation.R180, Rotation.R270)
+
+        val triConnections: MutableList<When> = mutableListOf()
+        val negatedTriConnections: MutableList<When> = mutableListOf()
+        for (i in 0..<4) {
+            createRitualLinePart(
+                ritualLine,
+                { When.create().set(directions[i], true) },
+                rotations[i],
+                lineSegment
+            )
+            createRitualLinePart(
+                ritualLine,
+                { When.create().set(directions[i], true).set(directions[(i + 1) % 4], true) },
+                rotations[i],
+                lineNotch
+            )
+            triConnections.add(
+                When.create()
+                    .set(directions[i], true)
+                    .set(directions[(i + 1) % 4], true)
+                    .set(directions[(i + 2) % 4], true)
+            )
+            negatedTriConnections.add(
+                When.anyOf(
+                    When.create().setNegated(directions[i], true),
+                    When.create().setNegated(directions[(i + 1) % 4], true),
+                    When.create().setNegated(directions[(i + 2) % 4], true),
+                )
+            )
+        }
+        val triWhen = When.anyOf(*triConnections.toTypedArray())
+        val notTriWhen = When.allOf(*negatedTriConnections.toTypedArray())
+        ritualLine.with(When.allOf(triWhen, When.create().set(RitualLine.POWER, 4)), createRotationSegmentBSV(Rotation.R0, "${lineDot}_flare_tall"))
+        ritualLine.with(When.allOf(notTriWhen, When.create().set(RitualLine.POWER, 4)), createRotationSegmentBSV(Rotation.R0, "${lineDot}_flare"))
         blockStateModelGenerator.blockStateCollector.accept(ritualLine)
     }
 
