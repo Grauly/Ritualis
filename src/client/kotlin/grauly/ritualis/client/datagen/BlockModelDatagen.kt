@@ -32,7 +32,8 @@ object BlockModelDatagen {
         val lineNotch = "block/ritual_notch"
         val lineDot = "block/ritual_dot"
         val ritualLine = MultipartBlockStateSupplier.create(ModBlocks.RITUAL_LINE)
-            .with(BlockStateVariant.create().put(VariantSettings.MODEL, Identifier.of(Ritualis.MODID, lineDot)))
+            .with(When.create().setNegated(RitualLine.POWER, 4), BlockStateVariant.create().put(VariantSettings.MODEL, Identifier.of(Ritualis.MODID, lineDot)))
+            .with(When.create().set(RitualLine.POWER, 4), BlockStateVariant.create().put(VariantSettings.MODEL, Identifier.of(Ritualis.MODID, "${lineDot}_high_power")))
 
         val directions = listOf(
             RitualLine.CONNECTED_NORTH,
@@ -84,7 +85,8 @@ object BlockModelDatagen {
         rotation: Rotation,
         model: String
     ) {
-        supplier.with(condition.invoke(), createRotationSegmentBSV(rotation, model))
+        supplier.with(condition.invoke().setNegated(RitualLine.POWER, 4), createRotationSegmentBSV(rotation, model))
+        supplier.with(condition.invoke().set(RitualLine.POWER, 4), createRotationSegmentBSV(rotation, "${model}_high_power"))
         supplier.with(condition.invoke().set(RitualLine.POWER, 4), createRotationSegmentBSV(rotation, "${model}_flare"))
     }
 

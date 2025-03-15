@@ -1,4 +1,4 @@
-// 1.21.4	2025-03-16T00:03:32.149814402	Ritualis/Model Definitions
+// 1.21.4	2025-03-16T00:52:01.95247655	Ritualis/Model Definitions
 e78048d20fa2a395574defc2dfe064e921e519de assets/ritualis/blockstates/light_blue_candle.json
 adc2c9547773b0173a75208b5852d572a5cf5887 assets/ritualis/items/light_blue_candle.json
 02328159e003dfe5107c1ee69ccbdb7e53af7ba3 assets/ritualis/models/item/ritual_line.json
@@ -9,15 +9,15 @@ e6ea4ce4d8f46e0df3417ed9bbace4fcb24864ae assets/ritualis/blockstates/gray_candle
 32ad0ce8fc20cfee88a69f410e579fb064d91077 assets/ritualis/blockstates/magenta_candle.json
 523fdafd9fdc50156621f4a16ff0d37bc129bcd1 assets/ritualis/blockstates/green_candle.json
 35da8f2bc6c8ad0ba7c4c538f3961144af5ea319 assets/ritualis/blockstates/candle.json
-3d063d744eacd65ef8244334a09bac36c94845e9 assets/ritualis/blockstates/ritual_line.json
+0df74bceed80916fefb4868ab5a802a0ae3d23ed assets/ritualis/blockstates/ritual_line.json
 cd6c40aac04b774dce1e7e24386a9adae2fdb1bc assets/ritualis/items/gray_candle.json
 c3eb2480e195b9c02f9116649d749152fd8cf93e assets/ritualis/items/purple_candle.json
 46cefaa91494f3d7e20d3d88899a32704400f794 assets/ritualis/items/floating_book.json
 b1bbde617d0ffe716b9fa215544b05595f977d64 assets/ritualis/blockstates/red_candle.json
 e055053b9d6ad17cfad3efb4aa494c76972bfe4d assets/ritualis/items/lime_candle.json
 31e192d2b519afa4284b11129eeca0ae966fb809 assets/ritualis/blockstates/light_gray_candle.json
-0f2389ec9e54b24eb23c20a661d735ceeda72c06 assets/ritualis/items/light_gray_candle.json
 1d01d2501171a44409faa9325994d8f18c764f50 assets/ritualis/items/black_candle.json
+0f2389ec9e54b24eb23c20a661d735ceeda72c06 assets/ritualis/items/light_gray_candle.json
 330cbea30300d355d3e1ed6b52f0d281f130be6a assets/ritualis/blockstates/cyan_candle.json
 ae6463ec7be60199f7f49164dc8a5edd93159110 assets/ritualis/items/white_candle.json
 99856a5ac8bcdd5706b59c55fec56e321eda033f assets/ritualis/items/ritual_line.json

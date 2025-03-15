@@ -3,6 +3,17 @@
     {
       "apply": {
         "model": "ritualis:block/ritual_dot"
+      },
+      "when": {
+        "power": "!4"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_dot_high_power"
+      },
+      "when": {
+        "power": "4"
       }
     },
     {
@@ -12,7 +23,19 @@
         "y": 0
       },
       "when": {
-        "north": "true"
+        "north": "true",
+        "power": "!4"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_high_power",
+        "uvlock": true,
+        "y": 0
+      },
+      "when": {
+        "north": "true",
+        "power": "4"
       }
     },
     {
@@ -34,7 +57,20 @@
       },
       "when": {
         "east": "true",
-        "north": "true"
+        "north": "true",
+        "power": "!4"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch_high_power",
+        "uvlock": true,
+        "y": 0
+      },
+      "when": {
+        "east": "true",
+        "north": "true",
+        "power": "4"
       }
     },
     {
@@ -56,7 +92,19 @@
         "y": 90
       },
       "when": {
-        "east": "true"
+        "east": "true",
+        "power": "!4"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_high_power",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "power": "4"
       }
     },
     {
@@ -78,6 +126,19 @@
       },
       "when": {
         "east": "true",
+        "power": "!4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch_high_power",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "power": "4",
         "south": "true"
       }
     },
@@ -100,6 +161,18 @@
         "y": 180
       },
       "when": {
+        "power": "!4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_high_power",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "power": "4",
         "south": "true"
       }
     },
@@ -121,6 +194,19 @@
         "y": 180
       },
       "when": {
+        "power": "!4",
+        "south": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch_high_power",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "power": "4",
         "south": "true",
         "west": "true"
       }
@@ -144,6 +230,18 @@
         "y": 270
       },
       "when": {
+        "power": "!4",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_line_high_power",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "power": "4",
         "west": "true"
       }
     },
@@ -166,6 +264,19 @@
       },
       "when": {
         "north": "true",
+        "power": "!4",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ritualis:block/ritual_notch_high_power",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "north": "true",
+        "power": "4",
         "west": "true"
       }
     },

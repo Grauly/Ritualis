@@ -1,0 +1,17 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "ritualis:block/ritual_line_high_power",
+		"particle": "ritualis:block/ritual_line_high_power"
+	},
+	"elements": [
+		{
+			"from": [5, 0, 5],
+			"to": [11, 1, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]},
+			"faces": {
+				"up": {"uv": [5, 5, 11, 11], "texture": "#0", "tintindex": 0}
+			}
+		}
+	]
+}
