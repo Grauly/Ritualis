@@ -2,7 +2,6 @@ package grauly.ritualis.block
 
 import com.google.common.collect.ImmutableMap
 import grauly.ritualis.ModBlockTags
-import grauly.ritualis.Ritualis
 import grauly.ritualis.util.OkLabColorSpace
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
@@ -35,27 +34,6 @@ class RitualLine(settings: Settings) : Block(settings) {
             if (state.get(POWER) != 0) continue
             SHAPES[state] = getShapeForState(state)
         }
-    }
-
-    private fun getShapeForState(state: BlockState): VoxelShape {
-        val neededShapes: MutableList<VoxelShape> = mutableListOf()
-        if (state.get(CONNECTED_NORTH)) neededShapes.add(CONNECTOR_SHAPES[Direction.NORTH]!!)
-        if (state.get(CONNECTED_EAST)) neededShapes.add(CONNECTOR_SHAPES[Direction.EAST]!!)
-        if (state.get(CONNECTED_SOUTH)) neededShapes.add(CONNECTOR_SHAPES[Direction.SOUTH]!!)
-        if (state.get(CONNECTED_WEST)) neededShapes.add(CONNECTOR_SHAPES[Direction.WEST]!!)
-        if (state.get(CONNECTED_NORTH) && state.get(CONNECTED_EAST))
-            neededShapes.add(createCuboidShape(11.0, 0.0, 3.0, 13.0, 1.0, 5.0))
-        if (state.get(CONNECTED_EAST) && state.get(CONNECTED_SOUTH))
-            neededShapes.add(createCuboidShape(11.0, 0.0, 11.0, 13.0, 1.0, 13.0))
-        if (state.get(CONNECTED_SOUTH) && state.get(CONNECTED_WEST))
-            neededShapes.add(createCuboidShape(3.0, 0.0, 11.0, 5.0, 1.0, 13.0))
-        if (state.get(CONNECTED_WEST) && state.get(CONNECTED_NORTH))
-            neededShapes.add(createCuboidShape(3.0, 0.0, 3.0, 5.0, 1.0, 5.0))
-        var finalVoxelShape = DOT_SHAPE
-        for (connectionShape in neededShapes) {
-            finalVoxelShape = VoxelShapes.union(finalVoxelShape, connectionShape)
-        }
-        return finalVoxelShape
     }
 
     override fun getOutlineShape(
@@ -116,8 +94,8 @@ class RitualLine(settings: Settings) : Block(settings) {
         private val START_COLOR: Color = Color(59, 0, 91)
         private val END_COLOR: Color = Color(241, 42, 252)
         val COLORS = generatePallete()
-
         val DOT_SHAPE: VoxelShape = createCuboidShape(5.0, 0.0, 5.0, 11.0, 1.0, 11.0)
+
         val CONNECTOR_SHAPES: EnumMap<Direction, VoxelShape> = EnumMap(
             ImmutableMap.of(
                 Direction.NORTH, createCuboidShape(5.0, 0.0, 0.0, 11.0, 1.0, 5.0),
@@ -126,7 +104,6 @@ class RitualLine(settings: Settings) : Block(settings) {
                 Direction.WEST, createCuboidShape(0.0, 0.0, 5.0, 5.0, 1.0, 11.0)
             )
         )
-
         var SHAPES: HashMap<BlockState, VoxelShape> = HashMap()
 
         private fun generatePallete(): IntArray {
@@ -136,6 +113,27 @@ class RitualLine(settings: Settings) : Block(settings) {
                 array[i] = OkLabColorSpace.interpolate(START_COLOR, END_COLOR, i / valueAmount.toDouble()).rgb
             }
             return array
+        }
+
+        private fun getShapeForState(state: BlockState): VoxelShape {
+            val neededShapes: MutableList<VoxelShape> = mutableListOf()
+            if (state.get(CONNECTED_NORTH)) neededShapes.add(CONNECTOR_SHAPES[Direction.NORTH]!!)
+            if (state.get(CONNECTED_EAST)) neededShapes.add(CONNECTOR_SHAPES[Direction.EAST]!!)
+            if (state.get(CONNECTED_SOUTH)) neededShapes.add(CONNECTOR_SHAPES[Direction.SOUTH]!!)
+            if (state.get(CONNECTED_WEST)) neededShapes.add(CONNECTOR_SHAPES[Direction.WEST]!!)
+            if (state.get(CONNECTED_NORTH) && state.get(CONNECTED_EAST))
+                neededShapes.add(createCuboidShape(11.0, 0.0, 3.0, 13.0, 1.0, 5.0))
+            if (state.get(CONNECTED_EAST) && state.get(CONNECTED_SOUTH))
+                neededShapes.add(createCuboidShape(11.0, 0.0, 11.0, 13.0, 1.0, 13.0))
+            if (state.get(CONNECTED_SOUTH) && state.get(CONNECTED_WEST))
+                neededShapes.add(createCuboidShape(3.0, 0.0, 11.0, 5.0, 1.0, 13.0))
+            if (state.get(CONNECTED_WEST) && state.get(CONNECTED_NORTH))
+                neededShapes.add(createCuboidShape(3.0, 0.0, 3.0, 5.0, 1.0, 5.0))
+            var finalVoxelShape = DOT_SHAPE
+            for (connectionShape in neededShapes) {
+                finalVoxelShape = VoxelShapes.union(finalVoxelShape, connectionShape)
+            }
+            return finalVoxelShape
         }
     }
 }
