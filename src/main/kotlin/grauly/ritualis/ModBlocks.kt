@@ -3,6 +3,7 @@ package grauly.ritualis
 import grauly.ritualis.block.FloatingBook
 import grauly.ritualis.block.RitualCandle
 import grauly.ritualis.block.RitualLine
+import grauly.ritualis.block.RitualPowerSource
 import net.minecraft.block.AbstractBlock
 import net.minecraft.block.Block
 import net.minecraft.block.CandleBlock
@@ -19,6 +20,7 @@ object ModBlocks {
 
     val FLOATING_BOOK = register("floating_book", ::FloatingBook)
     val RITUAL_LINE = register("ritual_line", ::RitualLine, AbstractBlock.Settings.create().noCollision().nonOpaque().breakInstantly())
+    val POWER_SOURCE = register("ritual_power_source", ::RitualPowerSource)
 
     private fun register(
         blockID: String,

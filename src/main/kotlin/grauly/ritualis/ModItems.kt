@@ -18,6 +18,7 @@ object ModItems {
 
     val FLOATING_BOOK_ITEM = registerBlockItem(ModBlocks.FLOATING_BOOK, "floating_book")
     val RITUAL_LINE_ITEM = registerBlockItem(ModBlocks.RITUAL_LINE, "ritual_line")
+    val POWER_SOURCE_ITEM = registerBlockItem(ModBlocks.POWER_SOURCE, "power_source")
 
     private fun registerBlockItem(block: Block, itemID: String, settings: Settings = Settings()): Item {
         val id = Identifier.of(Ritualis.MODID, itemID)
